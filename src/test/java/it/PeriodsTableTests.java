@@ -14,7 +14,6 @@ import db.ConnectionProvider;
 import db.tables.PeriodsTable;
 import model.Period;
 import model.Genre;
-import model.Period;
 import utils.Pair;
 import utils.Utils;
 
@@ -32,7 +31,7 @@ class PeriodsTableTests {
     @BeforeEach
     void setUp() throws Exception {
         PeriodsTable.dropTable();
-        PeriodsTable.createTable();
+        //PeriodsTable.createTable();
     }
 
     @AfterEach
@@ -44,8 +43,8 @@ class PeriodsTableTests {
     void creationAndDropTest() {
         assertTrue(PeriodsTable.dropTable());
         assertFalse(PeriodsTable.dropTable());
-        assertTrue(PeriodsTable.createTable());
-        assertFalse(PeriodsTable.createTable());
+        //assertTrue(PeriodsTable.createTable());
+        //assertFalse(PeriodsTable.createTable());
     }
     
     @Test

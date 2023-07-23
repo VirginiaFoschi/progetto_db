@@ -7,24 +7,20 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import utils.Pair;
-import utils.Utils;
-
 import db.Table;
-import model.Line;
+import model.Genre;
 
-public final class LinesTable implements Table<Line, Pair<String,Integer>> {    
+public final class GenresTable implements Table<Genre, String> {    
     
-    public static final String TABLE_NAME = "FILA";
+    public static final String TABLE_NAME = "GENERE";
 
     private final Connection connection; 
 
-    public LinesTable(final Connection connection) {
+    public GenresTable(final Connection connection) {
         this.connection = Objects.requireNonNull(connection);
     }
 
@@ -47,62 +43,60 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public Optional<Line> findByPrimaryKey(final Pair<String,Integer> id) {
+    public Optional<Genre> findByPrimaryKey(final String type) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE tipo = ?";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setString(1,id.getX());
+            statement.setString(1, type);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
-            //    here we extract the first (and only) film from the ResultSet
-            return readLinesFromResultSet(resultSet).stream().findFirst();
+            //    here we extract the first (and only) Genre from the ResultSet
+            return readGenresFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     /**
-     * Given a ResultSet read all the films in it and collects them in a List
-     * @param resultSet a ResultSet from which the film(s) will be extracted
-     * @return a List of all the films in the ResultSet
+     * Given a ResultSet read all the Genres in it and collects them in a List
+     * @param resultSet a ResultSet from which the Genre(s) will be extracted
+     * @return a List of all the Genres in the ResultSet
      */
-    private List<Line> readLinesFromResultSet(final ResultSet resultSet) {
-        final List<Line> Lines = new ArrayList<>();
+    private List<Genre> readGenresFromResultSet(final ResultSet resultSet) {
+        final List<Genre> genres = new ArrayList<>();
         try {
             // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
             // before the first row. With next the pointer advances to the following row and returns 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final String letter = resultSet.getString("lettera");
-                final int theaterID = resultSet.getInt("codice");
-                // After retrieving all the data we create a film object
-                final Line Line = new Line(theaterID,letter);
-                Lines.add(Line);
+                final String type = resultSet.getString("tipo");
+                // After retrieving all the data we create a Genre object
+                final Genre genre = new Genre(type);
+                genres.add(genre);
             }
         } catch (final SQLException e) {}
-        return Lines;
+        return genres;
     }
 
     @Override
-    public List<Line> findAll() {
+    public List<Genre> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
-            return readLinesFromResultSet(resultSet);
+            return readGenresFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public boolean save(final Line Line) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(lettera,codice) VALUES (?,?)";
+    public boolean save(final Genre genre) {
+        final String query = "INSERT INTO " + TABLE_NAME + "(tipo) VALUES (?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, Line.getLetter());
-            statement.setInt(2, Line.getTheater());
+            statement.setString(1, genre.getType());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -113,11 +107,10 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean delete(final Pair<String,Integer> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+    public boolean delete(final String type) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE tipo = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, id.getX());
-            statement.setInt(2, id.getY());
+            statement.setString(1, type);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -125,17 +118,13 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean update(final Line Line) {
+    public boolean update(final Genre genre) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "lettera = ?," + 
-                "codice = ? " +
-            "WHERE lettera = ? AND codice = ? ";
+                "tipo = ?" +
+            "WHERE tipo = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1,Line.getLetter());
-            statement.setInt(2,Line.getTheater());
-            statement.setString(3,Line.getLetter());
-            statement.setInt(4,Line.getTheater());
+            statement.setString(1,genre.getType());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

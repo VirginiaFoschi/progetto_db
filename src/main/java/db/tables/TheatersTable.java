@@ -20,7 +20,7 @@ import model.Theater;
 
 public final class TheatersTable implements Table<Theater, Integer> {    
     
-    public static final String TABLE_NAME = "Theater";
+    public static final String TABLE_NAME = "SALA_FILM";
 
     private final Connection connection; 
 
@@ -31,25 +31,6 @@ public final class TheatersTable implements Table<Theater, Integer> {
     @Override
     public String getTableName() {
         return TABLE_NAME;
-    }
-
-    @Override
-    public boolean createTable() {
-        // 1. Create the statement from the open connection inside a try-with-resources
-        try (final Statement statement = this.connection.createStatement()) {
-            // 2. Execute the statement with the given query
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "theaterID INTEGER NOT NULL AUTO_INCREMENT," +
-                        "type3D BOOLEAN," +
-                        "capacity INTEGER NOT NULL," +
-                        "CONSTRAINT PK_Theater PRIMARY KEY theaterID " +
-                ")");
-            return true;
-        } catch (final SQLException e) {
-            // 3. Handle possible SQLExceptions
-            return false;
-        }
     }
 
     @Override
@@ -68,7 +49,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
     @Override
     public Optional<Theater> findByPrimaryKey(final Integer id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE theaterID = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codice = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -96,11 +77,12 @@ public final class TheatersTable implements Table<Theater, Integer> {
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("theaterID");
-                final Optional<Boolean> type3D = Optional.ofNullable(resultSet.getBoolean("type3D"));
-                final int capacity = resultSet.getInt("capacity");
+                final int id = resultSet.getInt("codice");
+                final Boolean type3D = resultSet.getBoolean("3D");
+                final int surface = resultSet.getInt("superficie");
+                final int capacity = resultSet.getInt("capienza");
                 // After retrieving all the data we create a film object
-                final Theater theater = new Theater(id,type3D,capacity);
+                final Theater theater = new Theater(id,type3D,surface,capacity);
                 theaters.add(theater);
             }
         } catch (final SQLException e) {}
@@ -119,11 +101,12 @@ public final class TheatersTable implements Table<Theater, Integer> {
 
     @Override
     public boolean save(final Theater theater) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(theaterID,type3D,capacity) VALUES (?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(codice,3D,superficie,capienza) VALUES (?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, theater.getId());
-            statement.setBoolean(2, theater.getType().orElse(null));
-            statement.setInt(3, theater.getCapacity());
+            statement.setBoolean(2, theater.getType());
+            statement.setInt(3, theater.getSurface());
+            statement.setInt(4, theater.getCapacity());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -135,7 +118,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
 
     @Override
     public boolean delete(final Integer id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE theaterID = ? ";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codice = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
@@ -148,13 +131,15 @@ public final class TheatersTable implements Table<Theater, Integer> {
     public boolean update(final Theater theater) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "type3D = ?," + 
-                "capcity = ? " +
-            "WHERE theaterID = ? ";
+                "3D = ?," + 
+                "superficie = ?," +
+                "capacity = ? " +
+            "WHERE codice = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setBoolean(1,theater.getType().orElse(null));
-            statement.setInt(2,theater.getCapacity());
-            statement.setInt(3,theater.getId());
+            statement.setBoolean(1,theater.getType());
+            statement.setInt(2,theater.getSurface());
+            statement.setInt(3,theater.getCapacity());
+            statement.setInt(4,theater.getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

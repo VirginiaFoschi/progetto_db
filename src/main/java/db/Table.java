@@ -19,7 +19,7 @@ public interface Table<V,K> {
      * Creates the database table
      * @return false if the table could not be created
      */
-    boolean createTable();
+    //boolean createTable();
     
     /**
      * Drops the database table

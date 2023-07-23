@@ -36,7 +36,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // TODO Auto-generated method stub
-        MySQLConnect conn = new MySQLConnect();
+        Controller conn = new Controller();
         Parent root = FXMLLoader.load(ClassLoader.getSystemResource("view.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);

@@ -20,7 +20,7 @@ import model.Period;
 
 public final class PeriodsTable implements Table<Period, Pair<Date,Date>> {    
     
-    public static final String TABLE_NAME = "period";
+    public static final String TABLE_NAME = "PERIODO";
 
     private final Connection connection; 
 
@@ -31,24 +31,6 @@ public final class PeriodsTable implements Table<Period, Pair<Date,Date>> {
     @Override
     public String getTableName() {
         return TABLE_NAME;
-    }
-
-    @Override
-    public boolean createTable() {
-        // 1. Create the statement from the open connection inside a try-with-resources
-        try (final Statement statement = this.connection.createStatement()) {
-            // 2. Execute the statement with the given query
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "DataInizio DATETIME," +
-                        "DataFine DATETIME," +
-                        "CONSTRAINT PK_Period PRIMARY KEY (Datainizio,DataFine) " +
-                ")");
-            return true;
-        } catch (final SQLException e) {
-            // 3. Handle possible SQLExceptions
-            return false;
-        }
     }
 
     @Override
@@ -67,7 +49,7 @@ public final class PeriodsTable implements Table<Period, Pair<Date,Date>> {
     @Override
     public Optional<Period> findByPrimaryKey(final Pair<Date,Date> data) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE DataInizio = ? AND DataFine = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE dataInizio = ? AND dataFine = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -96,8 +78,8 @@ public final class PeriodsTable implements Table<Period, Pair<Date,Date>> {
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final Date dataInzio = Utils.sqlDateToDate(resultSet.getDate("DataInizio"));
-                final Date dataFine = Utils.sqlDateToDate(resultSet.getDate("DataFine"));
+                final Date dataInzio = Utils.sqlDateToDate(resultSet.getDate("dataInizio"));
+                final Date dataFine = Utils.sqlDateToDate(resultSet.getDate("dataFine"));
                 // After retrieving all the data we create a film object
                 final Period period = new Period(dataInzio, dataFine);
                 periods.add(period);
@@ -118,7 +100,7 @@ public final class PeriodsTable implements Table<Period, Pair<Date,Date>> {
 
     @Override
     public boolean save(final Period period) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(DataInizio, DataFine) VALUES (?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(dataInizio, dataFine) VALUES (?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1, Utils.dateToSqlDate(period.getStartDate()));
             statement.setDate(2, Utils.dateToSqlDate(period.getEndDate()));
@@ -133,7 +115,7 @@ public final class PeriodsTable implements Table<Period, Pair<Date,Date>> {
 
     @Override
     public boolean delete(final Pair<Date,Date> data) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE DataInizio = ? AND DataFine = ? ";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE dataInizio = ? AND dataFine = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1, Utils.dateToSqlDate(data.getX()));
             statement.setDate(2, Utils.dateToSqlDate(data.getY()));
@@ -147,9 +129,9 @@ public final class PeriodsTable implements Table<Period, Pair<Date,Date>> {
     public boolean update(final Period period) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "DataInizio = ?," + 
-                "DataFine = ?" + 
-            "WHERE DataInizio = ? AND DataFine = ? ";
+                "dataInizio = ?," + 
+                "dataFine = ?" + 
+            "WHERE dataInizio = ? AND dataFine = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1,Utils.dateToSqlDate(period.getStartDate()));
             statement.setDate(2,Utils.dateToSqlDate(period.getEndDate()));

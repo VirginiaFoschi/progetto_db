@@ -7,24 +7,20 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import utils.Pair;
-import utils.Utils;
-
 import db.Table;
-import model.Line;
+import model.ProgrammingMode;
 
-public final class LinesTable implements Table<Line, Pair<String,Integer>> {    
+public final class ProgrammingModesTable implements Table<ProgrammingMode, String> {    
     
-    public static final String TABLE_NAME = "FILA";
+    public static final String TABLE_NAME = "MODALITA_PROGRAMMAZIONE";
 
     private final Connection connection; 
 
-    public LinesTable(final Connection connection) {
+    public ProgrammingModesTable(final Connection connection) {
         this.connection = Objects.requireNonNull(connection);
     }
 
@@ -47,18 +43,18 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public Optional<Line> findByPrimaryKey(final Pair<String,Integer> id) {
+    public Optional<ProgrammingMode> findByPrimaryKey(final String id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE tipo = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setString(1,id.getX());
+            statement.setString(1, id);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
             //    here we extract the first (and only) film from the ResultSet
-            return readLinesFromResultSet(resultSet).stream().findFirst();
+            return readProgrammingModesFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -69,40 +65,42 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
      * @param resultSet a ResultSet from which the film(s) will be extracted
      * @return a List of all the films in the ResultSet
      */
-    private List<Line> readLinesFromResultSet(final ResultSet resultSet) {
-        final List<Line> Lines = new ArrayList<>();
+    private List<ProgrammingMode> readProgrammingModesFromResultSet(final ResultSet resultSet) {
+        final List<ProgrammingMode> programmingModes = new ArrayList<>();
         try {
             // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
             // before the first row. With next the pointer advances to the following row and returns 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final String letter = resultSet.getString("lettera");
-                final int theaterID = resultSet.getInt("codice");
+                final String type = resultSet.getString("tipo");
+                final String viewingExperience = resultSet.getString("esperienzaDiVisione");
+                final String visualEffect = resultSet.getString("effettoVisivo");
                 // After retrieving all the data we create a film object
-                final Line Line = new Line(theaterID,letter);
-                Lines.add(Line);
+                final ProgrammingMode programmingMode = new ProgrammingMode(type,viewingExperience,visualEffect);
+                programmingModes.add(programmingMode);
             }
         } catch (final SQLException e) {}
-        return Lines;
+        return programmingModes;
     }
 
     @Override
-    public List<Line> findAll() {
+    public List<ProgrammingMode> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
-            return readLinesFromResultSet(resultSet);
+            return readProgrammingModesFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public boolean save(final Line Line) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(lettera,codice) VALUES (?,?)";
+    public boolean save(final ProgrammingMode programmingMode) {
+        final String query = "INSERT INTO " + TABLE_NAME + "(tipo,esperienzaDiVisione,effettoVisivo) VALUES (?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, Line.getLetter());
-            statement.setInt(2, Line.getTheater());
+            statement.setString(1, programmingMode.getType());
+            statement.setString(2, programmingMode.getViewingExperience());
+            statement.setString(3, programmingMode.getVisualEffect());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -113,11 +111,10 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean delete(final Pair<String,Integer> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+    public boolean delete(final String id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE tipo = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, id.getX());
-            statement.setInt(2, id.getY());
+            statement.setString(1, id);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -125,17 +122,16 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean update(final Line Line) {
+    public boolean update(final ProgrammingMode programmingMode) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "lettera = ?," + 
-                "codice = ? " +
-            "WHERE lettera = ? AND codice = ? ";
+                "esperienzaDiVisione = ?," +
+                "effettoVisivo = ?" +
+            "WHERE tipo = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1,Line.getLetter());
-            statement.setInt(2,Line.getTheater());
-            statement.setString(3,Line.getLetter());
-            statement.setInt(4,Line.getTheater());
+            statement.setString(1,programmingMode.getViewingExperience());
+            statement.setString(2,programmingMode.getVisualEffect());
+            statement.setString(3,programmingMode.getType());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

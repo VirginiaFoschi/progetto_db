@@ -6,12 +6,14 @@ import java.util.Optional;
 public class Theater {
     
     private final int id;
-    private final Optional<Boolean> type3D;
+    private final Boolean type3D;
+    private final int surface;
     private final int capacity;
     
-    public Theater(int id, Optional<Boolean> type3D, int capacity) {
+    public Theater(int id, Boolean type3D, int surface, int capacity) {
         this.id = id;
         this.type3D = type3D;
+        this.surface = surface;
         this.capacity = capacity;
     }
 
@@ -19,8 +21,12 @@ public class Theater {
         return id;
     }
 
-    public Optional<Boolean> getType() {
+    public Boolean getType() {
         return type3D;
+    }
+
+    public int getSurface() {
+        return surface;
     }
 
     public int getCapacity() {
@@ -29,12 +35,12 @@ public class Theater {
 
     @Override
     public String toString() {
-        return "Theater [id=" + id + ", type3D=" + type3D + ", capacity=" + capacity + "]";
+        return "Theater [id=" + id + ", type3D=" + type3D + ", surface=" + surface + ", capacity=" + capacity + "]";
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,type3D,capacity);
+        return Objects.hash(id,type3D,surface,capacity);
     }
 
     @Override
@@ -42,6 +48,7 @@ public class Theater {
         return (other instanceof Theater)
                 && ((Theater) other).getId() == this.getId()
                 && ((Theater) other).getType().equals(this.getType())
+                && ((Theater) other).getSurface() == this.getSurface()
                 && ((Theater) other).getCapacity() == this.getCapacity();
     }
 

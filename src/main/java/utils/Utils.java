@@ -1,5 +1,6 @@
 package utils;
 
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -25,5 +26,17 @@ public final class Utils {
         } catch (final ParseException e) {
             return Optional.empty();
         }
+    }
+
+    public static Time timeToSqlTime(final String time) {
+        return Time.valueOf(time.concat(":00"));
+    }
+
+    public static String sqlTimeToTime(final Time time) {
+        return time.toString();
+    }
+
+    public static String buildTime (final int ore, final int minuti) {
+        return ore + ":" + minuti;
     }
 }

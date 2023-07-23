@@ -16,12 +16,11 @@ import utils.Utils;
 
 import db.Table;
 import model.Film;
-import model.Genre;
 import model.Period;
 
 public final class FilmsTable implements Table<Film, Integer> {    
     
-    public static final String TABLE_NAME = "film";
+    public static final String TABLE_NAME = "FILM";
 
     private final Connection connection; 
 
@@ -32,31 +31,6 @@ public final class FilmsTable implements Table<Film, Integer> {
     @Override
     public String getTableName() {
         return TABLE_NAME;
-    }
-
-    @Override
-    public boolean createTable() {
-        // 1. Create the statement from the open connection inside a try-with-resources
-        try (final Statement statement = this.connection.createStatement()) {
-            // 2. Execute the statement with the given query
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "FilmID INTEGER NOT NULL AUTO_INCREMENT," +
-                        "Titolo VARCHAR(100) NOT NULL," +
-                        "Regista VARCHAR(40) NOT NULL," +
-                        "Anno INTEGER NOT NULL," +
-                        "Durata INTEGER NOT NULL," +
-                        "Trama MEDIUMTEXT," +
-                        "DataInizio DATETIME REFERENCES Period(DataInizio)," +
-                        "DataFine DATETIME REFERENCES Period(DataFine)," +
-                        "Genere VARCHAR(40)," +
-                        "CONSTRAINT PK_Film PRIMARY KEY (FilmID) " +
-                ")");
-            return true;
-        } catch (final SQLException e) {
-            // 3. Handle possible SQLExceptions
-            return false;
-        }
     }
 
     @Override
@@ -75,7 +49,7 @@ public final class FilmsTable implements Table<Film, Integer> {
     @Override
     public Optional<Film> findByPrimaryKey(final Integer id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE FilmID = ?";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ?";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -103,17 +77,15 @@ public final class FilmsTable implements Table<Film, Integer> {
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("FilmID");
-                final String title = resultSet.getString("Titolo");
-                final String director = resultSet.getString("Regista");
-                final int duration = resultSet.getInt("Durata");
-                final int year = resultSet.getInt("Anno");
-                final String plot = resultSet.getString("Trama");
+                final int id = resultSet.getInt("codiceFilm");
+                final String title = resultSet.getString("titolo");
+                final int duration = resultSet.getInt("durata");
+                final int year = resultSet.getInt("anno");
+                final String plot = resultSet.getString("trama");
                 final Date dataInzio = Utils.sqlDateToDate(resultSet.getDate("dataInizio"));
                 final Date dataFine = Utils.sqlDateToDate(resultSet.getDate("dataFine"));
-                final String genere = resultSet.getString("Genere");
                 // After retrieving all the data we create a film object
-                final Film film = new Film(id,title,director,duration,year,plot,new Period(dataInzio, dataFine), new Genre(genere));
+                final Film film = new Film(id,title,duration,year,plot,new Period(dataInzio, dataFine));
                 films.add(film);
             }
         } catch (final SQLException e) {}
@@ -132,17 +104,15 @@ public final class FilmsTable implements Table<Film, Integer> {
 
     @Override
     public boolean save(final Film film) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(FilmID, Titolo, Regista, Anno, Durata, Trama, DataInizio, DataFine, Genere) VALUES (?,?,?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(codiceFilm,titolo,durata,anno,trama,dataInizio,dataFine) VALUES (?,?,?,?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, film.getId());
             statement.setString(2, film.getTitle());
-            statement.setString(3, film.getDirector());
-            statement.setInt(4, film.getYear());
-            statement.setInt(5, film.getDuration());
-            statement.setString(6, film.getPlot());
-            statement.setDate(7, Utils.dateToSqlDate(film.getPeriod().getStartDate()));
-            statement.setDate(8, Utils.dateToSqlDate(film.getPeriod().getEndDate()));
-            statement.setString(9, film.getGenre().getType());
+            statement.setInt(3, film.getYear());
+            statement.setInt(4, film.getDuration());
+            statement.setString(5, film.getPlot());
+            statement.setDate(6, Utils.dateToSqlDate(film.getPeriod().getStartDate()));
+            statement.setDate(7, Utils.dateToSqlDate(film.getPeriod().getEndDate()));
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -154,7 +124,7 @@ public final class FilmsTable implements Table<Film, Integer> {
 
     @Override
     public boolean delete(final Integer id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE FilmID = ?";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceFilm = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
@@ -167,25 +137,21 @@ public final class FilmsTable implements Table<Film, Integer> {
     public boolean update(final Film film) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "Titolo = ?," + 
-                "Regista = ?," +
-                "Anno = ?," + 
-                "Durata = ?," + 
-                "Trama = ?," +
-                "DataInizio = ?," + 
-                "DataFine = ?," + 
-                "Genere= ?" +
-            "WHERE FilmID = ?";
+                "titolo = ?," + 
+                "durata = ?," + 
+                "anno = ?," + 
+                "trama = ?," +
+                "dataInizio = ?," + 
+                "dataFine = ? " + 
+            "WHERE codiceFilm = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, film.getTitle());
-            statement.setString(2, film.getDirector());
+            statement.setInt(2, film.getDuration());
             statement.setInt(3, film.getYear());
-            statement.setInt(4, film.getDuration());
-            statement.setString(5, film.getPlot());
-            statement.setDate(6,Utils.dateToSqlDate(film.getPeriod().getStartDate()));
-            statement.setDate(7,Utils.dateToSqlDate(film.getPeriod().getEndDate()));
-            statement.setString(8,film.getGenre().getType());
-            statement.setInt(9, film.getId());
+            statement.setString(4, film.getPlot());
+            statement.setDate(5,Utils.dateToSqlDate(film.getPeriod().getStartDate()));
+            statement.setDate(6,Utils.dateToSqlDate(film.getPeriod().getEndDate()));
+            statement.setInt(7, film.getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

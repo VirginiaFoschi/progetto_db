@@ -12,19 +12,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import utils.Pair;
+import db.Table;
+import model.Client;
 import utils.Utils;
 
-import db.Table;
-import model.Line;
-
-public final class LinesTable implements Table<Line, Pair<String,Integer>> {    
+public final class ClientsTable implements Table<Client, String> {    
     
-    public static final String TABLE_NAME = "FILA";
+    public static final String TABLE_NAME = "CLIENTE";
 
     private final Connection connection; 
 
-    public LinesTable(final Connection connection) {
+    public ClientsTable(final Connection connection) {
         this.connection = Objects.requireNonNull(connection);
     }
 
@@ -47,18 +45,18 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public Optional<Line> findByPrimaryKey(final Pair<String,Integer> id) {
+    public Optional<Client> findByPrimaryKey(final String id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CF = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setString(1,id.getX());
+            statement.setString(1, id);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
             //    here we extract the first (and only) film from the ResultSet
-            return readLinesFromResultSet(resultSet).stream().findFirst();
+            return readClientsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -69,40 +67,48 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
      * @param resultSet a ResultSet from which the film(s) will be extracted
      * @return a List of all the films in the ResultSet
      */
-    private List<Line> readLinesFromResultSet(final ResultSet resultSet) {
-        final List<Line> Lines = new ArrayList<>();
+    private List<Client> readClientsFromResultSet(final ResultSet resultSet) {
+        final List<Client> clients = new ArrayList<>();
         try {
             // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
             // before the first row. With next the pointer advances to the following row and returns 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final String letter = resultSet.getString("lettera");
-                final int theaterID = resultSet.getInt("codice");
+                final String id = resultSet.getString("CF");
+                final String nome = resultSet.getString("nome");
+                final String cognome = resultSet.getString("cognome");
+                final Date dataNascita = Utils.sqlDateToDate(resultSet.getDate("dataNascita"));
+                final Optional<Integer> telefono = Optional.ofNullable(resultSet.getInt("telefono"));
+                final String mail = resultSet.getString("mail");
                 // After retrieving all the data we create a film object
-                final Line Line = new Line(theaterID,letter);
-                Lines.add(Line);
+                final Client client = new Client(id,nome,cognome,dataNascita,telefono,mail);
+                clients.add(client);
             }
         } catch (final SQLException e) {}
-        return Lines;
+        return clients;
     }
 
     @Override
-    public List<Line> findAll() {
+    public List<Client> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
-            return readLinesFromResultSet(resultSet);
+            return readClientsFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public boolean save(final Line Line) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(lettera,codice) VALUES (?,?)";
+    public boolean save(final Client client) {
+        final String query = "INSERT INTO " + TABLE_NAME + "(CF,nome,cognome,dataNascita,telefono,mail) VALUES (?,?,?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, Line.getLetter());
-            statement.setInt(2, Line.getTheater());
+            statement.setString(1, client.getCf());
+            statement.setString(2, client.getNome());
+            statement.setString(3, client.getCognome());
+            statement.setDate(4,Utils.dateToSqlDate(client.getDataNascita()));
+            statement.setInt(5, client.getTelefono().orElse(null));
+            statement.setString(6, client.getMail());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -113,11 +119,10 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean delete(final Pair<String,Integer> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+    public boolean delete(final String id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE CF = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, id.getX());
-            statement.setInt(2, id.getY());
+            statement.setString(1, id);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -125,17 +130,22 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean update(final Line Line) {
+    public boolean update(final Client client) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "lettera = ?," + 
-                "codice = ? " +
-            "WHERE lettera = ? AND codice = ? ";
+                "nome = ?," + 
+                "cognome = ?," +
+                "dataNascita = ?," +
+                "telefono = ?," +
+                "mail = ? " +
+            "WHERE CF = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1,Line.getLetter());
-            statement.setInt(2,Line.getTheater());
-            statement.setString(3,Line.getLetter());
-            statement.setInt(4,Line.getTheater());
+            statement.setString(1,client.getNome());
+            statement.setString(2,client.getCognome());
+            statement.setDate(3, Utils.dateToSqlDate(client.getDataNascita()));
+            statement.setInt(4, client.getTelefono().orElse(null));
+            statement.setString(5,client.getMail());
+            statement.setString(6,client.getCf());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

@@ -26,7 +26,7 @@ class FilmsTableTests {
     final static FilmsTable FilmsTable = new FilmsTable(connectionProvider.getMySQLConnection());
 
     //final Film film1 = new Film(1, "Elemental", "Cavalieri", Utils.buildDate(11, 10, 1998));
-    final Film film2 = new Film(2, "Emily", "Frances O'Connor", 130, 2023,
+    final Film film2 = null; /*new Film(2, "Emily", "Frances O'Connor", 130, 2023,
                                 "Cosa si nasconde dietro la creazione di un capolavoro? Emily racconta l'appassionante vita di una delle scrittrici più amate di tutti i tempi, Emily Bronte, mentre trova la sua voce letteraria e scrive uno dei pi\u00F9 importanti classici della letteratura, Cime tempestose.",
                                 new Period(Utils.buildDate(3,7,2023).get(), Utils.buildDate(5, 7, 2023).get()),
                                 new Genre("Drammatico-Biografico"));
@@ -69,7 +69,7 @@ class FilmsTableTests {
         final Optional<Film> foundFilm = FilmsTable.findByPrimaryKey(updatedfilm2.getId());
         assertFalse(foundFilm.isEmpty());
         assertEquals(updatedfilm2.getDuration(), foundFilm.get().getDuration());
-    }
+    }*/
 
     /*@Test
     void deleteTest() {
