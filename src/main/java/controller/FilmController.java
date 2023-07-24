@@ -1,146 +1,109 @@
 package controller;
 
-/*import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import org.controlsfx.control.CheckComboBox;
-
-public class FilmController {
-
-    @FXML
-    private CheckComboBox<?> actors;
-
-    @FXML
-    private ComboBox<?> director;
-
-    @FXML
-    private TextField duration;
-
-    @FXML
-    private DatePicker endDate;
-
-    @FXML
-    private CheckComboBox<?> genre;
-
-    @FXML
-    private Button insertFilm;
-
-    @FXML
-    private TextArea plot;
-
-    @FXML
-    private DatePicker startDate;
-
-    @FXML
-    private TextField title;
-
-    @FXML
-    private TextField year;
-
-}*/
-
-import java.net.URL;
-import java.util.Date;
-import java.util.ResourceBundle;
-
-import app.Controller;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import model.Cast;
+import model.Corrispondence;
 import model.Film;
+import model.Genre;
+import model.Participation;
+import model.Period;
+import utils.Utils;
 
-public class FilmController implements Initializable {
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
-    @FXML
-    private TableView<Film> table;
-    
-    @FXML
-    private TableColumn<Film, Integer> anno;
+import org.controlsfx.control.CheckComboBox;
 
-    @FXML
-    private TableColumn<Film, Date> dataFine;
+import app.Controller;
 
-    @FXML
-    private TableColumn<Film, Date> dataInizio;
-
-    @FXML
-    private TableColumn<Film,Integer> durata;
-
-    @FXML
-    private TextField director;
+public class FilmController implements Initializable{
 
     @FXML
-    private TextField duration;
+    private TextField anno;
 
     @FXML
-    private TableColumn<Film,String> genere;
+    private CheckComboBox<Cast> attori;
 
     @FXML
-    private ComboBox<String> genre;
+    private DialogPane dialogPane;
 
     @FXML
-    private TableColumn<Film,Integer> id;
+    private TextField durata;
 
     @FXML
-    private Button insert;
+    private DatePicker finePeriodo;
 
     @FXML
-    private TextArea plot;
+    private CheckComboBox<String> genere;
 
     @FXML
-    private TableColumn<Film,String> regista;
+    private DatePicker inizioPerido;
 
     @FXML
-    private TextField title;
+    private Button insertFilm;
 
     @FXML
-    private TableColumn<Film,String> titolo;
+    private ComboBox<Cast> regista;
 
     @FXML
-    private TableColumn<Film,String> trama;
+    private TextField titolo;
 
     @FXML
-    private TextField year;
+    private TextArea trama;
+
+    @FXML
+    private void insertFilm(ActionEvent event) throws IOException {
+        String title = titolo.getText();
+        List<Cast> actors = attori.getCheckModel().getCheckedItems();
+        Cast director = regista.getSelectionModel().getSelectedItem();
+        LocalDate startDate = inizioPerido.getValue();
+        LocalDate endDate = finePeriodo.getValue();
+        String duration = durata.getText();
+        String year = anno.getText();
+        String plot = trama.getText();
+        List<Genre> genre = genere.getCheckModel().getCheckedItems().stream().map(x->Controller.getGenreTable().findByPrimaryKey(x).get()).collect(Collectors.toList());
+        if (!title.isEmpty() && !actors.isEmpty() && director != null 
+            && startDate !=null && endDate !=null && startDate.isBefore(endDate) &&
+            !duration.isEmpty() && !year.isEmpty() && !genre.isEmpty()) {
+                Film film = new Film(title, Integer.parseInt(duration), Integer.parseInt(year), plot, new Period(Utils.localDateToDate(startDate),Utils.localDateToDate(endDate)));
+                Controller.getFilmsTable().save(film);
+                int filmID = Controller.getFilmsTable().getLastID();
+                genre.forEach(x->Controller.getCorrispondenceTable().save(new Corrispondence(filmID, x.getType())));
+                actors.add(director);
+                actors.forEach(x->Controller.getParticipationTable().save(new Participation(filmID, x.getId())));
+            }
+
+        //Controller.view();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // TODO Auto-generated method stub
-        id.setCellValueFactory(new PropertyValueFactory<Film,Integer>("id"));
-        titolo.setCellValueFactory(new PropertyValueFactory<Film,String>("title"));
-        regista.setCellValueFactory(new PropertyValueFactory<Film,String>("director"));
-        durata.setCellValueFactory(new PropertyValueFactory<Film,Integer>("duration"));
-        anno.setCellValueFactory(new PropertyValueFactory<Film,Integer>("year"));
-        trama.setCellValueFactory(new PropertyValueFactory<Film,String>("plot"));
-        dataInizio.setCellValueFactory(x->new SimpleObjectProperty<Date>(x.getValue().getPeriod().getStartDate()));
-        dataFine.setCellValueFactory(x->new SimpleObjectProperty<Date>(x.getValue().getPeriod().getEndDate()));
-        //genere.setCellValueFactory(x->new SimpleStringProperty(x.getValue().getGenre().getType()));
-
-        table.setItems(FXCollections.observableArrayList(Controller.getFilmsTable().findAll()));
-    }
-
-    @FXML
-    void insertFilm(ActionEvent event) {
-        /*Film film = new Film(2, "Emily", "Frances O'Connor", 130, 2023,
-                                "Cosa si nasconde dietro la creazione di un capolavoro? Emily racconta l'appassionante vita di una delle scrittrici più amate di tutti i tempi, Emily Bronte, mentre trova la sua voce letteraria e scrive uno dei pi\u00F9 importanti classici della letteratura, Cime tempestose.",
-                                new Period(Utils.buildDate(3,7,2023).get(), Utils.buildDate(5, 7, 2023).get()),
-                                new Genre("Drammatico-Biografico"));
-        Controller.getFilmsTable().save(film);
-        //table.setItems(FXCollections.observableArrayList(film));
-        table.setItems(FXCollections.observableArrayList(Controller.getFilmsTable().findAll()));*/
+        genere.setTitle("genere");
+        attori.setTitle("attori");
+        genere.getItems().addAll(FXCollections.observableArrayList(Controller.getGenreTable().findAll().stream().map(x->x.getType()).collect(Collectors.toList())));
+        attori.getItems().addAll(FXCollections.observableArrayList(Controller.getCastTable().findAll().stream().filter(x->x.isRegista()==false).collect(Collectors.toList())));
+        regista.getItems().addAll(FXCollections.observableArrayList(Controller.getCastTable().findAll().stream().filter(x->x.isRegista()==true).collect(Collectors.toList())));
     }
 
     
+    @FXML
+    void setGenre(MouseEvent event) {
+        
+    }
 
 }

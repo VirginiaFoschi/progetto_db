@@ -3,6 +3,7 @@ package utils;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -26,6 +27,10 @@ public final class Utils {
         } catch (final ParseException e) {
             return Optional.empty();
         }
+    }
+
+    public static java.util.Date localDateToDate(LocalDate date){
+        return sqlDateToDate(java.sql.Date.valueOf(date));
     }
 
     public static Time timeToSqlTime(final String time) {

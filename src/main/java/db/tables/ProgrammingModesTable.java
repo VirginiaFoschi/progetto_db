@@ -139,4 +139,13 @@ public final class ProgrammingModesTable implements Table<ProgrammingMode, Strin
         }
     }
 
+    public Integer getNumberOfProgrammingModes() {
+        try (final Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery("SELECT COUNT(tipo) FROM " + TABLE_NAME);
+            return resultSet.getInt(1);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }

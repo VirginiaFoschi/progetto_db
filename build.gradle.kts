@@ -49,6 +49,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$jUnitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jUnitVersion")
     implementation("mysql:mysql-connector-java:8.0.29")
+    implementation("org.controlsfx:controlsfx:11.1.2")
 }
 
 tasks.withType<Test> {

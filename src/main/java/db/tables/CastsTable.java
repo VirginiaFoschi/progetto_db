@@ -147,4 +147,37 @@ public final class CastsTable implements Table<Cast, Integer> {
         }
     }
 
+    public boolean isActor(final Integer id) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codice = ? AND regista = ? ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setInt(1, id);
+            statement.setBoolean(2, false);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return resultSet.getRow()!=0 ? true : false;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<Cast> getDirectors() {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE regista = ? ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setBoolean(1, true);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return readCastsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }

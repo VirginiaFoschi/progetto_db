@@ -21,6 +21,11 @@ public class Genre {
     }
 
     @Override
+    public String toString() {
+        return "Genre [type=" + type + "]";
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

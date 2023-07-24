@@ -1,4 +1,6 @@
 package app;
+import java.io.IOException;
+
 import controller.FilmController;
 import db.ConnectionProvider;
 import db.tables.FilmsTable;
@@ -9,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App extends Application {
+
+    Stage stage;
 
     public App(){}
 
@@ -36,11 +40,24 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // TODO Auto-generated method stub
-        Controller conn = new Controller();
+        Controller conn = new Controller(this);
+        this.stage=primaryStage;
+        view();
+    }
+
+    public void insertFilm() throws IOException {
+        Parent root = FXMLLoader.load(ClassLoader.getSystemResource("film.fxml"));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void view() throws IOException {
         Parent root = FXMLLoader.load(ClassLoader.getSystemResource("view.fxml"));
         Scene scene = new Scene(root);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Stage st = new Stage();
+        st.setScene(scene);
+        st.show();
     }
 
     

@@ -141,4 +141,19 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Int
         }
     }
 
+    public List<Integer> getFilmsInAllModes (final int programmingModes) {
+        List<Integer> filmsID = new ArrayList<>();
+        final String query = "SELECT codice FROM " + TABLE_NAME + " GROUP BY codice HAVING COUNT(tipo) = ? ";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1,programmingModes);
+            final ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                filmsID.add(resultSet.getInt("codice"));
+            }
+            return filmsID;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }

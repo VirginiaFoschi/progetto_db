@@ -142,4 +142,24 @@ public final class CorrispondencesTable implements Table<Corrispondence, Pair<In
         }
     }
 
+    public List<String> getFilmGenre(final Integer filmID) {
+        List<String> genres = new ArrayList<>();
+        final String query = "SELECT tipo FROM " + TABLE_NAME + " WHERE codice = ? ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setInt(1,filmID);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            while (resultSet.next()) {
+                genres.add(resultSet.getString("tipo"));
+            }
+            return genres;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }

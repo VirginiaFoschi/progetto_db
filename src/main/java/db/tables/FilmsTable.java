@@ -11,7 +11,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import app.Controller;
 import utils.Utils;
 
 import db.Table;
@@ -102,6 +104,15 @@ public final class FilmsTable implements Table<Film, Integer> {
         }
     }
 
+    public Integer getLastID() {
+        try (final Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery("SELECT LAST_INSERT_ID() ");
+            return resultSet.getInt("codice");
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     @Override
     public boolean save(final Film film) {
         final String query = "INSERT INTO " + TABLE_NAME + "(codiceFilm,titolo,durata,anno,trama,dataInizio,dataFine) VALUES (?,?,?,?,?,?,?)";
@@ -159,4 +170,11 @@ public final class FilmsTable implements Table<Film, Integer> {
         }
     }
 
+
+    public List<Film> fromIDtoFilm (final List<Integer> id) {
+        return id.stream()
+                .map(x->findByPrimaryKey(x).orElse(null))
+                .filter(x->x!=null)
+                .collect(Collectors.toList());
+    } 
 }
