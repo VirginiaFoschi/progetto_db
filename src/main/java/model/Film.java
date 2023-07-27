@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /***
  * Class representing a Film with simple fields: id, title, director, DurationgetDuration.
@@ -22,20 +23,22 @@ public class Film {
     private final String title;
     private final int duration;
     private final int year;
-    private final String plot;
+    private final Optional<String> plot;
     private final Period period;
-    
-    public Film(int id, String title, int duration, int year, String plot, Period period) {
+    private final int codiceRegista;
+
+    public Film(int id, String title, int duration, int year, Optional<String> plot, Period period, int codiceRegista) {
         this.id = id;
         this.title = title;
         this.duration = duration;
         this.year = year;
         this.plot = plot;
         this.period = period;
+        this.codiceRegista=codiceRegista;
     }
 
-    public Film(String title, int duration, int year, String plot, Period period) {
-        this(0,title,duration,year,plot,period);
+    public Film(String title, int duration, int year, Optional<String> plot, Period period,int codiceRegista) {
+        this(0,title,duration,year,plot,period,codiceRegista);
     }
 
     public int getId() {
@@ -54,7 +57,7 @@ public class Film {
         return year;
     }
 
-    public String getPlot() {
+    public Optional<String> getPlot() {
         return plot;
     }
 
@@ -62,19 +65,63 @@ public class Film {
         return period;
     }
 
-    @Override
-    public boolean equals(final Object other) {
-        return (other instanceof Film)
-                && ((Film) other).getId() == this.getId()
-                && ((Film) other).getTitle().equals(this.getTitle())
-                && ((Film) other).getDuration() == this.getDuration()
-                && ((Film) other).getYear() == this.getYear()
-                && ((Film) other).getPlot().equals(this.getPlot())
-                && ((Film) other).getPeriod().equals(this.getPeriod());
+    public int getCodiceRegista() {
+        return codiceRegista;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,title,duration,year,plot,period);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + duration;
+        result = prime * result + year;
+        result = prime * result + ((plot == null) ? 0 : plot.hashCode());
+        result = prime * result + ((period == null) ? 0 : period.hashCode());
+        result = prime * result + codiceRegista;
+        return result;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Film other = (Film) obj;
+        if (id != other.id)
+            return false;
+        if (title == null) {
+            if (other.title != null)
+                return false;
+        } else if (!title.equals(other.title))
+            return false;
+        if (duration != other.duration)
+            return false;
+        if (year != other.year)
+            return false;
+        if (plot == null) {
+            if (other.plot != null)
+                return false;
+        } else if (!plot.equals(other.plot))
+            return false;
+        if (period == null) {
+            if (other.period != null)
+                return false;
+        } else if (!period.equals(other.period))
+            return false;
+        if (codiceRegista != other.codiceRegista)
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Film [id=" + id + ", title=" + title + ", duration=" + duration + ", year=" + year + ", plot=" + plot
+                + ", period=" + period + ", codiceRegista=" + codiceRegista + "]";
+    }
+    
 }

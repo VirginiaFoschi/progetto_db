@@ -16,9 +16,10 @@ import utils.Pair;
 import utils.Utils;
 
 import db.Table;
+import model.Line;
 import model.Seat;
 
-public final class SeatsTable implements Table<Seat, Pair<Integer,Pair<Integer,String>>> {    
+public final class SeatsTable implements Table<Seat, Pair<Integer,Line>> {    
     
     public static final String TABLE_NAME = "POSTO";
 
@@ -47,14 +48,14 @@ public final class SeatsTable implements Table<Seat, Pair<Integer,Pair<Integer,S
     }
 
     @Override
-    public Optional<Seat> findByPrimaryKey(final Pair<Integer,Pair<Integer,String>> id) {
+    public Optional<Seat> findByPrimaryKey(final Pair<Integer,Line> id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? AND numero = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE lettera = ?  AND codiceSala = ? AND numero = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setString(1,id.getY().getY());
-            statement.setInt(2, id.getY().getX());
+            statement.setString(1,id.getY().getLetter());
+            statement.setInt(2, id.getY().getTheater());
             statement.setInt(3, id.getX());
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
@@ -80,7 +81,7 @@ public final class SeatsTable implements Table<Seat, Pair<Integer,Pair<Integer,S
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
                 final String letter = resultSet.getString("lettera");
-                final int theaterID = resultSet.getInt("codice");
+                final int theaterID = resultSet.getInt("codiceSala");
                 final int number = resultSet.getInt("numero");
                 // After retrieving all the data we create a film object
                 final Seat seat = new Seat(letter,number,theaterID);
@@ -102,7 +103,7 @@ public final class SeatsTable implements Table<Seat, Pair<Integer,Pair<Integer,S
 
     @Override
     public boolean save(final Seat seat) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(lettera,codice,numero) VALUES (?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(lettera,codiceSala,numero) VALUES (?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, seat.getLine());
             statement.setInt(2, seat.getTheater());
@@ -117,11 +118,11 @@ public final class SeatsTable implements Table<Seat, Pair<Integer,Pair<Integer,S
     }
 
     @Override
-    public boolean delete(final Pair<Integer,Pair<Integer,String>> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? AND numero = ? ";
+    public boolean delete(final Pair<Integer,Line> id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE lettera = ?  AND codiceSala = ? AND numero = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, id.getY().getY());
-            statement.setInt(2, id.getY().getX());
+            statement.setString(1, id.getY().getLetter());
+            statement.setInt(2, id.getY().getTheater());
             statement.setInt(3, id.getX());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
@@ -134,9 +135,9 @@ public final class SeatsTable implements Table<Seat, Pair<Integer,Pair<Integer,S
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
                 "lettera = ?," + 
-                "codice = ?," +
+                "codiceSala = ?," +
                 "numero = ? " +
-            "WHERE lettera = ? AND codice = ? AND numero = ? ";
+            "WHERE lettera = ? AND codiceSala = ? AND numero = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1,seat.getLine());
             statement.setInt(2,seat.getTheater());

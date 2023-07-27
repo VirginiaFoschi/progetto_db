@@ -9,11 +9,12 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="694.0" prefWidth="909.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="694.0" prefWidth="909.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
-    <Tab text="Film">
+    <Tab fx:id="film" text="Film">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="425.0" prefWidth="680.0">
                <children>
@@ -36,17 +37,17 @@
                   <TextField fx:id="filmID" layoutX="13.0" layoutY="94.0" promptText="codice film" />
                   <Button fx:id="searchFilm" layoutX="13.0" layoutY="127.0" mnemonicParsing="false" onAction="#searchFilm" prefHeight="26.0" prefWidth="69.0" text="Cerca film" />
                   <Button fx:id="showFilm" layoutX="13.0" layoutY="231.0" mnemonicParsing="false" onAction="#showFilm" text="Vedi film" />
-                  <TextField fx:id="actorID" layoutX="13.0" layoutY="281.0" promptText="codice attore" />
-                  <Button fx:id="showActorFilm" layoutX="13.0" layoutY="313.0" mnemonicParsing="false" onAction="#showActorFilm" text="Visualizza Film" />
+                  <TextField fx:id="actorID" layoutX="13.0" layoutY="299.0" promptText="codice attore" />
+                  <Button fx:id="showActorFilm" layoutX="13.0" layoutY="333.0" mnemonicParsing="false" onAction="#showActorFilm" text="Visualizza Film" />
                   <Button fx:id="deleteFilm" layoutX="85.0" layoutY="127.0" mnemonicParsing="false" onAction="#deleteFilm" prefHeight="26.0" prefWidth="77.0" text="Elimina film" />
                   <Button fx:id="insertFilm" layoutX="13.0" layoutY="29.0" mnemonicParsing="false" onAction="#insertFilm" text="Inserisci film" />
-                  <Button fx:id="film2Dand3D" layoutX="13.0" layoutY="370.0" mnemonicParsing="false" onAction="#filmInAllModes" text="Film in 2D e in 3D" />
-                  <Button fx:id="showAll" layoutX="13.0" layoutY="436.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutti i film" />
+                  <Button fx:id="film2Dand3D" layoutX="13.0" layoutY="406.0" mnemonicParsing="false" onAction="#filmInAllModes" text="Film in 2D e in 3D" />
+                  <Button fx:id="showAll" layoutX="13.0" layoutY="481.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutti i film" />
                   <DatePicker fx:id="date" layoutX="13.0" layoutY="198.0" prefHeight="26.0" prefWidth="149.6" promptText="data" />
                </children></AnchorPane>
       </content>
     </Tab>
-    <Tab text="Attori e registi">
+    <Tab fx:id="cast" text="Attori e registi">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -56,10 +57,10 @@
                   <Text layoutX="13.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="è un regista? " wrappingWidth="74.78125" />
                   <ComboBox layoutX="90.0" layoutY="122.0" prefHeight="26.0" prefWidth="70.0" />
                   <Button layoutX="13.0" layoutY="161.0" mnemonicParsing="false" text="Inserisci" />
-                  <Button layoutX="13.0" layoutY="214.0" mnemonicParsing="false" text="Visualizza attore con più film" />
-                  <Button layoutX="13.0" layoutY="320.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="316.0" text="Visualizza attori che non hanno mai recitato nei suoi film" textAlignment="JUSTIFY" />
-                  <ComboBox layoutX="13.0" layoutY="286.0" prefHeight="26.0" prefWidth="98.0" promptText="regista" />
-                  <TableView layoutX="341.0" layoutY="25.0" prefHeight="349.0" prefWidth="530.0">
+                  <Button layoutX="13.0" layoutY="224.0" mnemonicParsing="false" text="Visualizza attore con più film" />
+                  <Button layoutX="13.0" layoutY="389.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="316.0" text="Visualizza attori che non hanno mai recitato nei suoi film" textAlignment="JUSTIFY" />
+                  <ComboBox layoutX="97.0" layoutY="355.0" prefHeight="26.0" prefWidth="98.0" />
+                  <TableView layoutX="341.0" layoutY="25.0" prefHeight="612.0" prefWidth="531.0">
                     <columns>
                       <TableColumn prefWidth="75.0" text="codice" />
                       <TableColumn prefWidth="124.0" text="nome" />
@@ -68,22 +69,15 @@
                         <TableColumn prefWidth="87.99993896484375" text="regista" />
                     </columns>
                   </TableView>
-                  <TableView layoutX="13.0" layoutY="397.0" prefHeight="246.0" prefWidth="539.0">
-                    <columns>
-                      <TableColumn prefWidth="75.0" text="codice1" />
-                      <TableColumn prefWidth="75.0" text="nome1" />
-                        <TableColumn prefWidth="101.59999084472656" text="cognome1" />
-                        <TableColumn prefWidth="84.0" text="codice2" />
-                        <TableColumn prefWidth="96.79998779296875" text="nome2" />
-                        <TableColumn prefWidth="107.20001220703125" text="cognome2" />
-                    </columns>
-                  </TableView>
-                  <Button layoutX="570.0" layoutY="500.0" mnemonicParsing="false" text="Visualizza attori che hanno recitato nello stesso film" />
-                  <Button layoutX="200.0" layoutY="214.0" mnemonicParsing="false" text="Visualizza tutto" />
+                  <Button layoutX="13.0" layoutY="284.0" mnemonicParsing="false" text="Visualizza tutto" />
+                  <TextField layoutX="13.0" layoutY="465.0" promptText="codice film" />
+                  <Button layoutX="13.0" layoutY="498.0" mnemonicParsing="false" text="Visualizza attori" />
+                  <Button layoutX="118.0" layoutY="498.0" mnemonicParsing="false" text="Visualizza regista" />
+                  <Text layoutX="13.0" layoutY="373.0" strokeType="OUTSIDE" strokeWidth="0.0" text="scegli regista :" />
                </children></AnchorPane>
       </content>
     </Tab>
-      <Tab text="Proiezione">
+      <Tab fx:id="proiezione" text="Proiezione">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -121,30 +115,85 @@
                </children></AnchorPane>
         </content>
       </Tab>
-      <Tab text="Cliente">
+      <Tab fx:id="cliente" text="Cliente">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <TextField layoutX="14.0" layoutY="14.0" promptText="codice fiscale" />
-                  <TextField layoutX="15.0" layoutY="40.0" promptText="nome" />
-                  <TextField layoutX="15.0" layoutY="66.0" promptText="cognome" />
-                  <TextField layoutX="14.0" layoutY="118.0" prefHeight="26.0" prefWidth="153.0" promptText="telefono" />
-                  <TextField layoutX="14.0" layoutY="144.0" prefHeight="26.0" prefWidth="154.0" promptText="e-mail" />
-                  <Button layoutX="18.0" layoutY="178.0" mnemonicParsing="false" text="Inserisci cliente" />
-                  <TableView layoutX="208.0" layoutY="18.0" prefHeight="603.0" prefWidth="660.0">
+                  <TextField layoutX="13.0" layoutY="14.0" promptText="codice fiscale" />
+                  <TextField layoutX="13.0" layoutY="46.0" promptText="nome" />
+                  <TextField layoutX="13.0" layoutY="79.0" promptText="cognome" />
+                  <TextField layoutX="13.0" layoutY="145.0" prefHeight="26.0" prefWidth="149.6" promptText="telefono" />
+                  <TextField layoutX="13.0" layoutY="178.0" prefHeight="26.0" prefWidth="149.6" promptText="e-mail" />
+                  <Button layoutX="13.0" layoutY="212.0" mnemonicParsing="false" text="Inserisci cliente" />
+                  <TableView layoutX="199.0" layoutY="18.0" prefHeight="603.0" prefWidth="669.0">
                     <columns>
-                      <TableColumn prefWidth="81.60005187988281" text="codice fiscale" />
-                      <TableColumn prefWidth="93.5999755859375" text="nome" />
-                        <TableColumn prefWidth="108.79998779296875" text="cognome" />
+                      <TableColumn prefWidth="89.59996032714844" text="codice fiscale" />
+                      <TableColumn prefWidth="99.20001220703125" text="nome" />
+                        <TableColumn prefWidth="96.79998779296875" text="cognome" />
                         <TableColumn prefWidth="116.0" text="data di nascita" />
                         <TableColumn prefWidth="128.79998779296875" text="telefono" />
                         <TableColumn prefWidth="145.5999755859375" text="e-mail" />
                     </columns>
                   </TableView>
-                  <TextField layoutX="19.0" layoutY="262.0" promptText="codice fiscale cliente" />
-                  <Button layoutX="19.0" layoutY="295.0" mnemonicParsing="false" text="Visualizza cineCard" />
-                  <Button layoutX="19.0" layoutY="385.0" mnemonicParsing="false" text="Visualizza tutti i clienti" />
-                  <DatePicker layoutX="14.0" layoutY="92.0" promptText="data" />
+                  <TextField layoutX="13.0" layoutY="285.0" promptText="codice fiscale cliente" />
+                  <Button layoutX="13.0" layoutY="320.0" mnemonicParsing="false" text="Visualizza cineCard" />
+                  <DatePicker layoutX="13.0" layoutY="112.0" prefHeight="26.0" prefWidth="149.0" promptText="data" />
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
+      <Tab fx:id="cinecard" text="Cinecard">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+      </Tab>
+      <Tab fx:id="negozio" text="Negozio">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Text layoutX="26.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Acquisto biglietto :">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+                  <TextField layoutX="64.0" layoutY="99.0" promptText="codice film" />
+                  <ComboBox fx:id="date6" layoutX="64.0" layoutY="132.0" prefHeight="26.0" prefWidth="71.0" promptText="data" />
+                  <ComboBox fx:id="time6" layoutX="146.0" layoutY="132.0" prefHeight="26.0" prefWidth="67.0" promptText="ora" />
+                  <ComboBox fx:id="seat6" layoutX="64.0" layoutY="166.0" prefWidth="150.0" promptText="posto" />
+                  <TextField layoutX="64.0" layoutY="67.0" promptText="codice fiscale cliente" />
+                  <Button fx:id="buyTicket" layoutX="65.0" layoutY="229.0" mnemonicParsing="false" onAction="#buyTicket" text="Acquista biglietto" />
+                  <TableView layoutX="232.0" layoutY="25.0" prefHeight="322.0" prefWidth="647.0">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="CF" />
+                      <TableColumn prefWidth="75.0" text="data" />
+                        <TableColumn prefWidth="75.0" text="ora" />
+                        <TableColumn prefWidth="76.0" text="sala" />
+                        <TableColumn prefWidth="64.0" text="fila" />
+                        <TableColumn prefWidth="63.20001220703125" text="posto" />
+                        <TableColumn prefWidth="89.60003662109375" text="data acquisto" />
+                        <TableColumn prefWidth="61.5999755859375" text="cinecard" />
+                        <TableColumn prefWidth="67.199951171875" text="prezzo" />
+                    </columns>
+                  </TableView>
+                  <TextField fx:id="cf" layoutX="64.0" layoutY="291.0" promptText="codice fiscale cliente" />
+                  <Button layoutX="63.0" layoutY="320.0" mnemonicParsing="false" text="Visualizza biglietti" />
+                  <Text layoutX="26.0" layoutY="399.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Acquisto Cinecard (nella tabella sono mostrate le diverse tipologie disponibili) :">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+                  <TableView layoutX="232.0" layoutY="428.0" prefHeight="223.0" prefWidth="424.0">
+                    <columns>
+                      <TableColumn prefWidth="153.59999084472656" text="N. ingressi totali" />
+                      <TableColumn prefWidth="147.20001220703125" text="prezzo" />
+                        <TableColumn prefWidth="119.20001220703125" text="mesi validità" />
+                    </columns>
+                  </TableView>
+                  <TextField layoutX="64.0" layoutY="428.0" promptText="codice fiscale cliente" />
+                  <ComboBox layoutX="63.0" layoutY="461.0" prefWidth="150.0" promptText="numero ingressi" />
+                  <Button layoutX="64.0" layoutY="496.0" mnemonicParsing="false" text="Acquista cinecard" />
+                  <Text layoutX="64.0" layoutY="215.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cinecard?" wrappingWidth="49.78125" />
+                  <ComboBox fx:id="cinecard6" layoutX="119.0" layoutY="197.0" prefHeight="23.0" prefWidth="94.0" />
                </children>
             </AnchorPane>
         </content>

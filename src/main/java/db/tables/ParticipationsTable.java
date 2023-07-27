@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import app.Controller;
 import utils.Pair;
 
 import db.Table;
+import model.Actor;
+import model.Cast;
+import model.Film;
 import model.Participation;
 
-public final class ParticipationsTable implements Table<Participation, Pair<Integer,Integer>> {    
+public final class ParticipationsTable implements Table<Participation, Pair<Film,Cast>> {    
     
     public static final String TABLE_NAME = "PARTECIPAZIONE";
 
@@ -45,14 +49,14 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
     }
 
     @Override
-    public Optional<Participation> findByPrimaryKey(final Pair<Integer,Integer> id) {
+    public Optional<Participation> findByPrimaryKey(final Pair<Film,Cast> id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ?  AND codice = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ?  AND codiceAttore = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setInt(1,id.getX());
-            statement.setInt(2,id.getY());
+            statement.setInt(1,id.getX().getId());
+            statement.setInt(2,id.getY().getId());
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
@@ -76,7 +80,7 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final int actorID = resultSet.getInt("codice");
+                final int actorID = resultSet.getInt("codiceAttore");
                 final int filmID = resultSet.getInt("codiceFilm");
                 // After retrieving all the data we create a film object
                 final Participation participation = new Participation(filmID,actorID);
@@ -98,7 +102,7 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
 
     @Override
     public boolean save(final Participation participation) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(codiceFilm,codice) VALUES (?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(codiceFilm,codiceAttore) VALUES (?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, participation.getFilmID());
             statement.setInt(2, participation.getCastID());
@@ -112,11 +116,11 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
     }
 
     @Override
-    public boolean delete(final Pair<Integer,Integer> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceFilm = ?  AND codice = ? ";
+    public boolean delete(final Pair<Film,Cast> id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceFilm = ?  AND codiceAttore = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, id.getX());
-            statement.setInt(2, id.getY());
+            statement.setInt(1, id.getX().getId());
+            statement.setInt(2, id.getY().getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -128,8 +132,8 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
                 "codiceFilm = ?," + 
-                "codice = ? " +
-            "WHERE codiceFilm = ? AND codice = ? ";
+                "codiceAttore = ? " +
+            "WHERE codiceFilm = ? AND codiceAttore = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1,participation.getFilmID());
             statement.setInt(2,participation.getCastID());
@@ -144,7 +148,7 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
 
     public List<Integer> getFilmsFromActor(final Integer actorID) {
         List<Integer> films = new ArrayList<>();
-        final String query = "SELECT codiceFilm FROM " + TABLE_NAME + " WHERE codice = ? ";
+        final String query = "SELECT codiceFilm FROM " + TABLE_NAME + " WHERE codiceAttore = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -164,18 +168,17 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
 
     public List<Integer> getActorFromFilm(final Integer filmID) {
         List<Integer> actors = new ArrayList<>();
-        final String query = "SELECT codice FROM " + TABLE_NAME + " WHERE codiceFilm = ? AND regista = ? ";
+        final String query = "SELECT codiceAttore FROM " + TABLE_NAME + " WHERE codiceFilm = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
             statement.setInt(1,filmID);
-            statement.setBoolean(2, false);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
             //    here we extract the first (and only) film from the ResultSet
             while (resultSet.next()) {
-                actors.add(resultSet.getInt("codiceFilm"));
+                actors.add(resultSet.getInt("codiceAttore"));
             }
             return actors;
         } catch (final SQLException e) {
@@ -183,18 +186,24 @@ public final class ParticipationsTable implements Table<Participation, Pair<Inte
         }
     }
 
-    public Integer getDirectorFromFilm(final Integer filmID) {
-        final String query = "SELECT codice FROM " + TABLE_NAME + " WHERE codiceFilm = ? AND regista = ? ";
+    public List<Cast> getActorInOrder() {
+        List<Cast> actors = new ArrayList<>();
+        final String query = "SELECT A.* " +
+                            "FROM " + TABLE_NAME + " P , " + Controller.getActorTable().getTableName() + " A " +
+                            "WHERE P.codiceAttore = A.codiceAttore " +
+                            "GROUP BY A.codiceAttore, nome, cognome, nazionalità ORDER BY COUNT(*) DESC ";
         // 2. Prepare a statement inside a try-with-resources
-        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            // 3. Fill in the "?" with actual data
-            statement.setInt(1,filmID);
-            statement.setBoolean(2, true);
-            // 4. Execute the query, this operations returns a ResultSet
+         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             final ResultSet resultSet = statement.executeQuery();
-            // 5. Do something with the result of the query execution; 
-            //    here we extract the first (and only) film from the ResultSet
-            return resultSet.getInt("codice");
+            while (resultSet.next()) {
+                final int id = resultSet.getInt("codiceAttore");
+                final String nome = resultSet.getString("nome");
+                final String cognome = resultSet.getString("cognome");
+                final String nazionalita = resultSet.getString("nazionalità");
+                Cast actor = new Actor(id, nome, cognome, nazionalita);
+                actors.add(actor);
+            }
+            return actors;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }

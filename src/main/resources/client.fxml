@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClientController">
+    <children>
+        <TextField fx:id="cf" layoutX="13.0" layoutY="14.0" promptText="codice fiscale *" />
+        <TextField fx:id="name" layoutX="13.0" layoutY="46.0" promptText="nome *" />
+        <TextField fx:id="surname" layoutX="13.0" layoutY="79.0" promptText="cognome *" />
+        <TextField fx:id="tel" layoutX="13.0" layoutY="145.0" prefHeight="26.0" prefWidth="149.6" promptText="telefono" />
+        <TextField fx:id="mail" layoutX="13.0" layoutY="178.0" prefHeight="26.0" prefWidth="149.6" promptText="e-mail *" />
+        <Button fx:id="insert" layoutX="13.0" layoutY="212.0" mnemonicParsing="false" onAction="#insertClient" text="Inserisci cliente" />
+        <TableView fx:id="table" layoutX="199.0" layoutY="18.0" prefHeight="603.0" prefWidth="669.0">
+        <columns>
+            <TableColumn fx:id="cf_column" prefWidth="89.59996032714844" text="codice fiscale" />
+            <TableColumn fx:id="nome" prefWidth="99.20001220703125" text="nome" />
+            <TableColumn fx:id="cognome" prefWidth="96.79998779296875" text="cognome" />
+            <TableColumn fx:id="dataNascita" prefWidth="116.0" text="data di nascita" />
+            <TableColumn fx:id="telefono" prefWidth="128.79998779296875" text="telefono" />
+            <TableColumn fx:id="mail_column" prefWidth="145.5999755859375" text="e-mail" />
+        </columns>
+        </TableView>
+        <TextField fx:id="cf2" layoutX="13.0" layoutY="285.0" promptText="codice fiscale cliente *" />
+        <Button fx:id="showCinecards" layoutX="13.0" layoutY="320.0" mnemonicParsing="false" onAction="#showCinecards" text="Visualizza cineCard" />
+        <DatePicker fx:id="dateOfBirth" layoutX="13.0" layoutY="112.0" prefHeight="26.0" prefWidth="149.0" promptText="data di nascita" />
+    </children>
+</AnchorPane>

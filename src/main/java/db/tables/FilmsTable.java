@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import app.Controller;
 import utils.Utils;
 
 import db.Table;
@@ -83,11 +82,12 @@ public final class FilmsTable implements Table<Film, Integer> {
                 final String title = resultSet.getString("titolo");
                 final int duration = resultSet.getInt("durata");
                 final int year = resultSet.getInt("anno");
-                final String plot = resultSet.getString("trama");
+                final int registerID = resultSet.getInt("codiceRegista");
+                final Optional<String> plot = Optional.ofNullable(resultSet.getString("trama"));
                 final Date dataInzio = Utils.sqlDateToDate(resultSet.getDate("dataInizio"));
                 final Date dataFine = Utils.sqlDateToDate(resultSet.getDate("dataFine"));
                 // After retrieving all the data we create a film object
-                final Film film = new Film(id,title,duration,year,plot,new Period(dataInzio, dataFine));
+                final Film film = new Film(id,title,duration,year,plot,new Period(dataInzio, dataFine),registerID);
                 films.add(film);
             }
         } catch (final SQLException e) {}
@@ -106,8 +106,10 @@ public final class FilmsTable implements Table<Film, Integer> {
 
     public Integer getLastID() {
         try (final Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT LAST_INSERT_ID() ");
-            return resultSet.getInt("codice");
+            final ResultSet resultSet = statement.executeQuery("SELECT codiceFilm FROM " + TABLE_NAME + " WHERE codiceFilm = LAST_INSERT_ID() ");
+            resultSet.next();
+            int id = resultSet.getInt("codiceFilm");
+            return id;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -115,13 +117,13 @@ public final class FilmsTable implements Table<Film, Integer> {
 
     @Override
     public boolean save(final Film film) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(codiceFilm,titolo,durata,anno,trama,dataInizio,dataFine) VALUES (?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + " (titolo,durata,anno,codiceRegista,trama,dataInizio,dataFine) VALUES (?,?,?,?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, film.getId());
-            statement.setString(2, film.getTitle());
+            statement.setString(1, film.getTitle());
+            statement.setInt(2, film.getDuration());
             statement.setInt(3, film.getYear());
-            statement.setInt(4, film.getDuration());
-            statement.setString(5, film.getPlot());
+            statement.setInt(4,film.getCodiceRegista());
+            statement.setString(5, film.getPlot().orElse(null));
             statement.setDate(6, Utils.dateToSqlDate(film.getPeriod().getStartDate()));
             statement.setDate(7, Utils.dateToSqlDate(film.getPeriod().getEndDate()));
             statement.executeUpdate();
@@ -151,6 +153,7 @@ public final class FilmsTable implements Table<Film, Integer> {
                 "titolo = ?," + 
                 "durata = ?," + 
                 "anno = ?," + 
+                "codiceRegista = ?," +
                 "trama = ?," +
                 "dataInizio = ?," + 
                 "dataFine = ? " + 
@@ -159,10 +162,11 @@ public final class FilmsTable implements Table<Film, Integer> {
             statement.setString(1, film.getTitle());
             statement.setInt(2, film.getDuration());
             statement.setInt(3, film.getYear());
-            statement.setString(4, film.getPlot());
-            statement.setDate(5,Utils.dateToSqlDate(film.getPeriod().getStartDate()));
-            statement.setDate(6,Utils.dateToSqlDate(film.getPeriod().getEndDate()));
-            statement.setInt(7, film.getId());
+            statement.setInt(4,film.getCodiceRegista());
+            statement.setString(5, film.getPlot().orElse(null));
+            statement.setDate(6,Utils.dateToSqlDate(film.getPeriod().getStartDate()));
+            statement.setDate(7,Utils.dateToSqlDate(film.getPeriod().getEndDate()));
+            statement.setInt(8, film.getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

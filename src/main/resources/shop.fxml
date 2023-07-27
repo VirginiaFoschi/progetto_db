@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ShopController">
+    <children>
+        <Text layoutX="26.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Acquisto biglietto :">
+            <font>
+            <Font size="18.0" />
+            </font>
+        </Text>
+        <TextField fx:id="filmID" layoutX="64.0" layoutY="99.0" promptText="codice film" />
+        <ComboBox fx:id="date" layoutX="64.0" layoutY="132.0" prefHeight="26.0" prefWidth="71.0" promptText="data" />
+        <ComboBox fx:id="time" layoutX="146.0" layoutY="132.0" prefHeight="26.0" prefWidth="67.0" promptText="ora" />
+        <ComboBox fx:id="seat" layoutX="64.0" layoutY="166.0" prefWidth="150.0" promptText="posto" />
+        <TextField fx:id="cf" layoutX="64.0" layoutY="67.0" promptText="codice fiscale cliente" />
+        <Button fx:id="buyTicket" layoutX="65.0" layoutY="229.0" mnemonicParsing="false" text="Acquista biglietto" />
+        <TableView layoutX="232.0" layoutY="25.0" prefHeight="322.0" prefWidth="647.0">
+        <columns>
+            <TableColumn fx:id="cf_column" prefWidth="75.0" text="CF" />
+            <TableColumn fx:id="data" prefWidth="75.0" text="data" />
+            <TableColumn fx:id="ora" prefWidth="75.0" text="ora" />
+            <TableColumn fx:id="sala" prefWidth="76.0" text="sala" />
+            <TableColumn fx:id="fila" prefWidth="64.0" text="fila" />
+            <TableColumn fx:id="posto" prefWidth="63.20001220703125" text="posto" />
+            <TableColumn fx:id="dataAcquisto" prefWidth="89.60003662109375" text="data acquisto" />
+            <TableColumn fx:id="cinecard_column" prefWidth="61.5999755859375" text="cinecard" />
+            <TableColumn fx:id="prezzo" prefWidth="67.199951171875" text="prezzo" />
+        </columns>
+        </TableView>
+        <TextField fx:id="cf2" layoutX="64.0" layoutY="291.0" promptText="codice fiscale cliente" />
+        <Button fx:id="showTickets" layoutX="63.0" layoutY="320.0" mnemonicParsing="false" text="Visualizza biglietti" />
+        <Text layoutX="26.0" layoutY="399.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Acquisto Cinecard (nella tabella sono mostrate le diverse tipologie disponibili) :">
+            <font>
+            <Font size="18.0" />
+            </font>
+        </Text>
+        <TableView layoutX="232.0" layoutY="428.0" prefHeight="223.0" prefWidth="424.0">
+        <columns>
+            <TableColumn fx:id="totalEntrances" prefWidth="153.59999084472656" text="N. ingressi totali" />
+            <TableColumn fx:id="price" prefWidth="147.20001220703125" text="prezzo" />
+            <TableColumn fx:id="months" prefWidth="119.20001220703125" text="mesi validità" />
+        </columns>
+        </TableView>
+        <TextField fx:id="cf3" layoutX="64.0" layoutY="428.0" promptText="codice fiscale cliente" />
+        <ComboBox fx:id="numberEntrances" layoutX="63.0" layoutY="461.0" prefWidth="150.0" promptText="numero ingressi" />
+        <Button fx:id="buyCinecard" layoutX="64.0" layoutY="496.0" mnemonicParsing="false" text="Acquista cinecard" />
+        <Text layoutX="64.0" layoutY="215.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cinecard?" wrappingWidth="49.78125" />
+        <ComboBox fx:id="cinecard" layoutX="119.0" layoutY="197.0" prefHeight="23.0" prefWidth="94.0" />
+    </children>
+</AnchorPane>

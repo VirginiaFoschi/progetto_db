@@ -6,14 +6,22 @@ public class Cast {
     private final String nome;
     private final String cognome;
     private final String nazionalita;
-    private final boolean regista;
+    private final Boolean regista;
 
-    public Cast(int codice, String nome, String cognome, String nazionalita, boolean regista) {
+    public Cast(int codice, String nome, String cognome, String nazionalita, Boolean regista) {
         this.codice = codice;
         this.nome = nome;
         this.cognome = cognome;
         this.nazionalita = nazionalita;
         this.regista = regista;
+    }
+
+    public Cast(String nome, String cognome, String nazionalita, Boolean regista) {
+        this(0,nome,cognome,nazionalita,regista);
+    }
+
+    public Boolean isRegista() {
+        return regista;
     }
 
     public int getId() {
@@ -32,10 +40,6 @@ public class Cast {
         return nazionalita;
     }
 
-    public boolean isRegista() {
-        return regista;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -44,7 +48,7 @@ public class Cast {
         result = prime * result + ((nome == null) ? 0 : nome.hashCode());
         result = prime * result + ((cognome == null) ? 0 : cognome.hashCode());
         result = prime * result + ((nazionalita == null) ? 0 : nazionalita.hashCode());
-        result = prime * result + (regista ? 1231 : 1237);
+        result = prime * result + ((regista == null) ? 0 : regista.hashCode());
         return result;
     }
 
@@ -74,16 +78,18 @@ public class Cast {
                 return false;
         } else if (!nazionalita.equals(other.nazionalita))
             return false;
-        if (regista != other.regista)
+        if (regista == null) {
+            if (other.regista != null)
+                return false;
+        } else if (!regista.equals(other.regista))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "Cast [codice=" + codice + ", nome=" + nome + ", cognome=" + cognome + ", nazionalità=" + nazionalita
+        return "Cast [codice=" + codice + ", nome=" + nome + ", cognome=" + cognome + ", nazionalita=" + nazionalita
                 + ", regista=" + regista + "]";
     }
 
-    
 }

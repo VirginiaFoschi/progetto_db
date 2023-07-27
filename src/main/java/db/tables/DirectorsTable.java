@@ -11,19 +11,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import utils.Pair;
-
 import db.Table;
-import model.Corrispondence;
-import model.Film;
+import model.Cast;
+import model.Director;
 
-public final class CorrispondencesTable implements Table<Corrispondence, Pair<Film,String>> {    
+public final class DirectorsTable implements Table<Cast, Integer> {    
     
-    public static final String TABLE_NAME = "CORRISPONDENZA";
+    public static final String TABLE_NAME = "REGISTA";
 
     private final Connection connection; 
 
-    public CorrispondencesTable(final Connection connection) {
+    public DirectorsTable(final Connection connection) {
         this.connection = Objects.requireNonNull(connection);
     }
 
@@ -46,19 +44,18 @@ public final class CorrispondencesTable implements Table<Corrispondence, Pair<Fi
     }
 
     @Override
-    public Optional<Corrispondence> findByPrimaryKey(final Pair<Film,String> id) {
+    public Optional<Cast> findByPrimaryKey(final Integer id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ?  AND tipo = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceRegista = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setInt(1,id.getX().getId());
-            statement.setString(2, id.getY());
+            statement.setInt(1, id);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
             //    here we extract the first (and only) film from the ResultSet
-            return readCorrispondencesFromResultSet(resultSet).stream().findFirst();
+            return readDirectorsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -69,40 +66,43 @@ public final class CorrispondencesTable implements Table<Corrispondence, Pair<Fi
      * @param resultSet a ResultSet from which the film(s) will be extracted
      * @return a List of all the films in the ResultSet
      */
-    private List<Corrispondence> readCorrispondencesFromResultSet(final ResultSet resultSet) {
-        final List<Corrispondence> corrispondences = new ArrayList<>();
+    private List<Cast> readDirectorsFromResultSet(final ResultSet resultSet) {
+        final List<Cast> directors = new ArrayList<>();
         try {
             // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
             // before the first row. With next the pointer advances to the following row and returns 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final String genre = resultSet.getString("tipo");
-                final int filmID = resultSet.getInt("codiceFilm");
+                final int id = resultSet.getInt("codiceRegista");
+                final String nome = resultSet.getString("nome");
+                final String cognome = resultSet.getString("cognome");
+                final String nazionalita = resultSet.getString("nazionalità");
                 // After retrieving all the data we create a film object
-                final Corrispondence corrispondence = new Corrispondence(filmID,genre);
-                corrispondences.add(corrispondence);
+                final Cast director = new Director(id,nome,cognome,nazionalita);
+                directors.add(director);
             }
         } catch (final SQLException e) {}
-        return corrispondences;
+        return directors;
     }
 
     @Override
-    public List<Corrispondence> findAll() {
+    public List<Cast> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
-            return readCorrispondencesFromResultSet(resultSet);
+            return readDirectorsFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public boolean save(final Corrispondence corrispondence) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(tipo,codiceFilm) VALUES (?,?)";
+    public boolean save(final Cast cast) {
+        final String query = "INSERT INTO " + TABLE_NAME + "(nome,cognome,nazionalità) VALUES (?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, corrispondence.getGenre());
-            statement.setInt(2, corrispondence.getFilmID());
+            statement.setString(1, cast.getNome());
+            statement.setString(2, cast.getCognome());
+            statement.setString(3, cast.getNazionalita());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -113,11 +113,10 @@ public final class CorrispondencesTable implements Table<Corrispondence, Pair<Fi
     }
 
     @Override
-    public boolean delete(final Pair<Film,String> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE tipo = ?  AND codiceFilm = ? ";
+    public boolean delete(final Integer id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceRegista = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, id.getY());
-            statement.setInt(2, id.getX().getId());
+            statement.setInt(1, id);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -125,40 +124,21 @@ public final class CorrispondencesTable implements Table<Corrispondence, Pair<Fi
     }
 
     @Override
-    public boolean update(final Corrispondence corrispondence) {
+    public boolean update(final Cast cast) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "tipo = ?," + 
-                "codiceFilm = ? " +
-            "WHERE tipo = ? AND codiceFilm = ? ";
+                "nome = ?," + 
+                "cognome = ?," +
+                "nazionalita = ?" +
+            "WHERE codiceRegista = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1,corrispondence.getGenre());
-            statement.setInt(2,corrispondence.getFilmID());
-            statement.setString(3,corrispondence.getGenre());
-            statement.setInt(4,corrispondence.getFilmID());
+            statement.setString(1,cast.getNome());
+            statement.setString(2,cast.getCognome());
+            statement.setString(3,cast.getNazionalita());
+            statement.setInt(4,cast.getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public List<String> getFilmGenre(final Integer filmID) {
-        List<String> genres = new ArrayList<>();
-        final String query = "SELECT tipo FROM " + TABLE_NAME + " WHERE codiceFilm = ? ";
-        // 2. Prepare a statement inside a try-with-resources
-        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            // 3. Fill in the "?" with actual data
-            statement.setInt(1,filmID);
-            // 4. Execute the query, this operations returns a ResultSet
-            final ResultSet resultSet = statement.executeQuery();
-            // 5. Do something with the result of the query execution; 
-            //    here we extract the first (and only) film from the ResultSet
-            while (resultSet.next()) {
-                genres.add(resultSet.getString("tipo"));
-            }
-            return genres;
-        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }

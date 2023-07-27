@@ -49,7 +49,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
     @Override
     public Optional<Theater> findByPrimaryKey(final Integer id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codice = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceSala = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -77,7 +77,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("codice");
+                final int id = resultSet.getInt("codiceSala");
                 final Boolean type3D = resultSet.getBoolean("3D");
                 final int surface = resultSet.getInt("superficie");
                 final int capacity = resultSet.getInt("capienza");
@@ -101,7 +101,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
 
     @Override
     public boolean save(final Theater theater) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(codice,3D,superficie,capienza) VALUES (?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(codiceSala,3D,superficie,capienza) VALUES (?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, theater.getId());
             statement.setBoolean(2, theater.getType());
@@ -118,7 +118,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
 
     @Override
     public boolean delete(final Integer id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codice = ? ";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceSala = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
@@ -133,8 +133,8 @@ public final class TheatersTable implements Table<Theater, Integer> {
             "UPDATE " + TABLE_NAME + " SET " +
                 "3D = ?," + 
                 "superficie = ?," +
-                "capacity = ? " +
-            "WHERE codice = ? ";
+                "capienza = ? " +
+            "WHERE codiceSala = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setBoolean(1,theater.getType());
             statement.setInt(2,theater.getSurface());

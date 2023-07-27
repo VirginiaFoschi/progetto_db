@@ -17,8 +17,9 @@ import utils.Utils;
 
 import db.Table;
 import model.Line;
+import model.Theater;
 
-public final class LinesTable implements Table<Line, Pair<String,Integer>> {    
+public final class LinesTable implements Table<Line, Pair<String,Theater>> {    
     
     public static final String TABLE_NAME = "FILA";
 
@@ -47,13 +48,14 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public Optional<Line> findByPrimaryKey(final Pair<String,Integer> id) {
+    public Optional<Line> findByPrimaryKey(final Pair<String,Theater> id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE lettera = ?  AND codiceSala = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
             statement.setString(1,id.getX());
+            statement.setInt(2,id.getY().getId());
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
@@ -78,7 +80,7 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
                 final String letter = resultSet.getString("lettera");
-                final int theaterID = resultSet.getInt("codice");
+                final int theaterID = resultSet.getInt("codiceSala");
                 // After retrieving all the data we create a film object
                 final Line Line = new Line(theaterID,letter);
                 Lines.add(Line);
@@ -99,7 +101,7 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
 
     @Override
     public boolean save(final Line Line) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(lettera,codice) VALUES (?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(lettera,codiceSala) VALUES (?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, Line.getLetter());
             statement.setInt(2, Line.getTheater());
@@ -113,11 +115,11 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean delete(final Pair<String,Integer> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE lettera = ?  AND codice = ? ";
+    public boolean delete(final Pair<String,Theater> id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE lettera = ?  AND codiceSala = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, id.getX());
-            statement.setInt(2, id.getY());
+            statement.setInt(2, id.getY().getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -125,17 +127,17 @@ public final class LinesTable implements Table<Line, Pair<String,Integer>> {
     }
 
     @Override
-    public boolean update(final Line Line) {
+    public boolean update(final Line line) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
                 "lettera = ?," + 
-                "codice = ? " +
-            "WHERE lettera = ? AND codice = ? ";
+                "codiceSala = ? " +
+            "WHERE lettera = ? AND codiceSala = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1,Line.getLetter());
-            statement.setInt(2,Line.getTheater());
-            statement.setString(3,Line.getLetter());
-            statement.setInt(4,Line.getTheater());
+            statement.setString(1,line.getLetter());
+            statement.setInt(2,line.getTheater());
+            statement.setString(3,line.getLetter());
+            statement.setInt(4,line.getTheater());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

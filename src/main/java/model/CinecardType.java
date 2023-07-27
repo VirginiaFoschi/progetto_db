@@ -3,10 +3,10 @@ package model;
 public class CinecardType {
 
     private final int entrancesNumber;
-    private final float price;
+    private final double price;
     private final int validityMonths;
 
-    public CinecardType(int entrancesNumber, float price, int validityMonths) {
+    public CinecardType(int entrancesNumber, double price, int validityMonths) {
         this.entrancesNumber = entrancesNumber;
         this.price = price;
         this.validityMonths = validityMonths;
@@ -16,7 +16,7 @@ public class CinecardType {
         return entrancesNumber;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -29,7 +29,9 @@ public class CinecardType {
         final int prime = 31;
         int result = 1;
         result = prime * result + entrancesNumber;
-        result = prime * result + Float.floatToIntBits(price);
+        long temp;
+        temp = Double.doubleToLongBits(price);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + validityMonths;
         return result;
     }
@@ -45,7 +47,7 @@ public class CinecardType {
         CinecardType other = (CinecardType) obj;
         if (entrancesNumber != other.entrancesNumber)
             return false;
-        if (Float.floatToIntBits(price) != Float.floatToIntBits(other.price))
+        if (Double.doubleToLongBits(price) != Double.doubleToLongBits(other.price))
             return false;
         if (validityMonths != other.validityMonths)
             return false;
@@ -57,5 +59,5 @@ public class CinecardType {
         return "CinecardType [entrancesNumber=" + entrancesNumber + ", price=" + price + ", validityMonths="
                 + validityMonths + "]";
     }
-     
+
 }

@@ -17,8 +17,9 @@ import utils.Utils;
 
 import db.Table;
 import model.CineCard;
+import model.Client;
 
-public final class CinecardsTable implements Table<CineCard, Pair<String,Date>> {    
+public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> {    
     
     public static final String TABLE_NAME = "CINECARD";
 
@@ -47,13 +48,13 @@ public final class CinecardsTable implements Table<CineCard, Pair<String,Date>> 
     }
 
     @Override
-    public Optional<CineCard> findByPrimaryKey(final Pair<String,Date> id) {
+    public Optional<CineCard> findByPrimaryKey(final Pair<Client,Date> id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE cf = ?  AND dataAcquisto = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CF = ?  AND dataAcquisto = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setString(1,id.getX());
+            statement.setString(1,id.getX().getCf());
             statement.setDate(2,Utils.dateToSqlDate(id.getY()));
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
@@ -78,10 +79,10 @@ public final class CinecardsTable implements Table<CineCard, Pair<String,Date>> 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final String cf = resultSet.getString("cf");
+                final String cf = resultSet.getString("CF");
                 final Date dataAcquisto = Utils.dateToSqlDate(resultSet.getDate("dataAcquisto"));
-                final int ingressiDisponibili = resultSet.getInt("ingressiDisponibili");
-                final int numeroIngressi = resultSet.getInt("numeroIngressi");
+                final int ingressiDisponibili = resultSet.getInt("numeroIngressiDisponibili");
+                final int numeroIngressi = resultSet.getInt("numeroIngressiTotali");
                 // After retrieving all the data we create a film object
                 final CineCard cineCard = new CineCard(cf,dataAcquisto,ingressiDisponibili,numeroIngressi);
                 cineCards.add(cineCard);
@@ -102,7 +103,7 @@ public final class CinecardsTable implements Table<CineCard, Pair<String,Date>> 
 
     @Override
     public boolean save(final CineCard cineCard) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(cf,dataAcquisto,ingressiDisponibili,numeroIngressi) VALUES (?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(CF,dataAcquisto,numeroIngressiDisponibili,numeroIngressiTotali) VALUES (?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, cineCard.getClient_cf());
             statement.setDate(2, Utils.dateToSqlDate(cineCard.getDataAcquisto()));
@@ -118,10 +119,10 @@ public final class CinecardsTable implements Table<CineCard, Pair<String,Date>> 
     }
 
     @Override
-    public boolean delete(final Pair<String,Date> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE cf = ?  AND dataAcquisto = ? ";
+    public boolean delete(final Pair<Client,Date> id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE CF = ?  AND dataAcquisto = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, id.getX());
+            statement.setString(1, id.getX().getCf());
             statement.setDate(2, Utils.dateToSqlDate(id.getY()));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
@@ -133,9 +134,9 @@ public final class CinecardsTable implements Table<CineCard, Pair<String,Date>> 
     public boolean update(final CineCard cineCard) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "ingressiDisponibili = ?," +
-                "numeroIngressi = ? " +
-            "WHERE cf = ? AND dataAcquisto = ? ";
+                "numeroIngressiDisponibili = ?," +
+                "numeroIngressiTotali = ? " +
+            "WHERE CF = ? AND dataAcquisto = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1,cineCard.getIngressiDisponibili());
             statement.setInt(2,cineCard.getIngressiTotali());

@@ -49,7 +49,7 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
     @Override
     public Optional<CinecardType> findByPrimaryKey(final Integer id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE numeroIngressi = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE numeroIngressiTotali = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -77,8 +77,8 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final int entrancesNumber = resultSet.getInt("numeroIngressi");
-                final float price = resultSet.getFloat("prezzo");
+                final int entrancesNumber = resultSet.getInt("numeroIngressiTotali");
+                final Double price = resultSet.getDouble("prezzo");
                 final int validityMonths = resultSet.getInt("mesiValidità");
                 // After retrieving all the data we create a film object
                 final CinecardType cinecardType = new CinecardType(entrancesNumber,price,validityMonths);
@@ -100,10 +100,10 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
 
     @Override
     public boolean save(final CinecardType cinecardType) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(numeroIngressi,prezzo,mesiValidità) VALUES (?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(numeroIngressiTotali,prezzo,mesiValidità) VALUES (?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1,cinecardType.getEntrancesNumber());
-            statement.setFloat(2, cinecardType.getPrice());
+            statement.setDouble(2, cinecardType.getPrice());
             statement.setInt(3,cinecardType.getValidityMonths());
             statement.executeUpdate();
             return true;
@@ -116,7 +116,7 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
 
     @Override
     public boolean delete(final Integer id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE numeroIngressi = ? ";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE numeroIngressiTotali = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
@@ -131,9 +131,9 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
             "UPDATE " + TABLE_NAME + " SET " +
                 "prezzo = ?," +
                 "mesiValidità = ? " +
-            "WHERE numeroIngressi = ? ";
+            "WHERE numeroIngressiTotali = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setFloat(1,cinecardType.getPrice());
+            statement.setDouble(1,cinecardType.getPrice());
             statement.setInt(2,cinecardType.getValidityMonths());
             statement.setInt(3,cinecardType.getEntrancesNumber());
             return statement.executeUpdate() > 0;

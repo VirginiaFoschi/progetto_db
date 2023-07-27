@@ -12,10 +12,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 import db.Table;
+import model.Film;
 import model.FilmDetail;
 import utils.Pair;
 
-public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Integer>> {    
+public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Film>> {    
     
     public static final String TABLE_NAME = "DETTAGLIO_FILM";
 
@@ -44,14 +45,14 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Int
     }
 
     @Override
-    public Optional<FilmDetail> findByPrimaryKey(final Pair<String,Integer> id) {
+    public Optional<FilmDetail> findByPrimaryKey(final Pair<String,Film> id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE tipo = ? AND codice = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE tipo = ? AND codiceFilm = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
             statement.setString(1, id.getX());
-            statement.setInt(2,id.getY());
+            statement.setInt(2,id.getY().getId());
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
@@ -76,7 +77,7 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Int
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
                 final String filmType = resultSet.getString("tipo");
-                final int filmID = resultSet.getInt("codice");
+                final int filmID = resultSet.getInt("codiceFilm");
                 // After retrieving all the data we create a FilmDetail object
                 final FilmDetail filmDetail = new FilmDetail(filmType,filmID);
                 filmDetails.add(filmDetail);
@@ -97,7 +98,7 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Int
 
     @Override
     public boolean save(final FilmDetail filmDetail) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(tipo,codice) VALUES (?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(tipo,codiceFilm) VALUES (?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, filmDetail.getFilmType());
             statement.setInt(2,filmDetail.getFilmID());
@@ -111,11 +112,11 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Int
     }
 
     @Override
-    public boolean delete(final Pair<String,Integer> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE tipo = ? AND codice = ? ";
+    public boolean delete(final Pair<String,Film> id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE tipo = ? AND codiceFilm = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, id.getX());
-            statement.setInt(2,id.getY());
+            statement.setInt(2,id.getY().getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -127,8 +128,8 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Int
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
                 "tipo = ?," +
-                "codice = ? " +
-            "WHERE tipo = ? AND codice = ? ";
+                "codiceFilm = ? " +
+            "WHERE tipo = ? AND codiceFilm = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1,filmDetail.getFilmType());
             statement.setInt(2,filmDetail.getFilmID());
@@ -143,12 +144,12 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Int
 
     public List<Integer> getFilmsInAllModes (final int programmingModes) {
         List<Integer> filmsID = new ArrayList<>();
-        final String query = "SELECT codice FROM " + TABLE_NAME + " GROUP BY codice HAVING COUNT(tipo) = ? ";
+        final String query = "SELECT codiceFilm FROM " + TABLE_NAME + " GROUP BY codiceFilm HAVING COUNT(tipo) = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1,programmingModes);
             final ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                filmsID.add(resultSet.getInt("codice"));
+                filmsID.add(resultSet.getInt("codiceFilm"));
             }
             return filmsID;
         } catch (final SQLException e) {

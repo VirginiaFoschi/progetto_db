@@ -1,9 +1,6 @@
 package app;
 import java.io.IOException;
 
-import controller.FilmController;
-import db.ConnectionProvider;
-import db.tables.FilmsTable;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -46,7 +43,7 @@ public class App extends Application {
     }
 
     public void insertFilm() throws IOException {
-        Parent root = FXMLLoader.load(ClassLoader.getSystemResource("film.fxml"));
+        Parent root = FXMLLoader.load(ClassLoader.getSystemResource("insertFilm2.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();

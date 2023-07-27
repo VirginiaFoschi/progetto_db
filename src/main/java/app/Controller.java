@@ -1,19 +1,33 @@
 package app;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 import db.ConnectionProvider;
-import db.tables.CastsTable;
+import db.tables.ActorsTable;
+import db.tables.AgeRangesTable;
+import db.tables.CategoriesTable;
+import db.tables.CinecardTypesTable;
+import db.tables.CinecardsTable;
+import db.tables.ClientsTable;
 import db.tables.CorrispondencesTable;
+import db.tables.DirectorsTable;
 import db.tables.FilmDetailsTable;
 import db.tables.FilmsTable;
 import db.tables.GenresTable;
 import db.tables.LinesTable;
 import db.tables.ParticipationsTable;
+import db.tables.PeriodsTable;
 import db.tables.ProgrammingModesTable;
+import db.tables.RatesTable;
 import db.tables.SeatsTable;
+import db.tables.ShowingsTable;
 import db.tables.TheatersTable;
-import model.Cast;
+import db.tables.TicketsTable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import model.Genre;
 import model.ProgrammingMode;
 
 public class Controller {
@@ -30,14 +44,68 @@ public class Controller {
     private static TheatersTable theatreTable = new TheatersTable(connectionProvider.getMySQLConnection());
     private static SeatsTable seatTable = new SeatsTable(connectionProvider.getMySQLConnection());
     private static LinesTable lineTable = new LinesTable(connectionProvider.getMySQLConnection());
-    private static CastsTable castTable = new CastsTable(connectionProvider.getMySQLConnection());
+    private static ActorsTable actorTable = new ActorsTable(connectionProvider.getMySQLConnection());
+    private static DirectorsTable directorTable = new DirectorsTable(connectionProvider.getMySQLConnection());
+    private static AgeRangesTable ageRangeTable = new AgeRangesTable(connectionProvider.getMySQLConnection());
+    private static CategoriesTable categoryTable = new CategoriesTable(connectionProvider.getMySQLConnection());
+    private static CinecardsTable cinecardTable = new CinecardsTable(connectionProvider.getMySQLConnection());
+    private static CinecardTypesTable cinecardTypeTable = new CinecardTypesTable(connectionProvider.getMySQLConnection());
+    private static PeriodsTable periodTable = new PeriodsTable(connectionProvider.getMySQLConnection());
+    private static RatesTable rateTable = new RatesTable(connectionProvider.getMySQLConnection());
+    private static ShowingsTable showingTable = new ShowingsTable(connectionProvider.getMySQLConnection());
+    private static TicketsTable ticketTable = new TicketsTable(connectionProvider.getMySQLConnection());
     private static CorrispondencesTable corrispondenceTable = new CorrispondencesTable(connectionProvider.getMySQLConnection());
     private static ParticipationsTable participationTable = new ParticipationsTable(connectionProvider.getMySQLConnection());
     private static FilmDetailsTable filmDetailTable = new FilmDetailsTable(connectionProvider.getMySQLConnection());
     private static ProgrammingModesTable programmingModesTable = new ProgrammingModesTable(connectionProvider.getMySQLConnection());
+    private static ClientsTable clientTable = new ClientsTable(connectionProvider.getMySQLConnection());
 
     public Controller(final App application) {
-        this.app = application;
+        app = application;
+    }
+
+    public static ClientsTable getClientTable() {
+        return clientTable;
+    }
+
+    public static ActorsTable getActorTable() {
+        return actorTable;
+    }
+
+    public static DirectorsTable getDirectorTable() {
+        return directorTable;
+    }
+
+    public static AgeRangesTable getAgeRangeTable() {
+        return ageRangeTable;
+    }
+
+    public static CategoriesTable getCategoryTable() {
+        return categoryTable;
+    }
+
+    public static CinecardsTable getCinecardTable() {
+        return cinecardTable;
+    }
+
+    public static CinecardTypesTable getCinecardTypeTable() {
+        return cinecardTypeTable;
+    }
+
+    public static PeriodsTable getPeriodTable() {
+        return periodTable;
+    }
+
+    public static RatesTable getRateTable() {
+        return rateTable;
+    }
+
+    public static ShowingsTable getShowingTable() {
+        return showingTable;
+    }
+
+    public static TicketsTable getTicketTable() {
+        return ticketTable;
     }
 
     public static ProgrammingModesTable getProgrammingModesTable() {
@@ -54,10 +122,6 @@ public class Controller {
 
     public static CorrispondencesTable getCorrispondenceTable() {
         return corrispondenceTable;
-    }
-
-    public static CastsTable getCastTable() {
-        return castTable;
     }
 
     public static GenresTable getGenreTable() {
@@ -86,6 +150,18 @@ public class Controller {
 
     public static void view() throws IOException {
         app.view();
+    }
+
+    public static void allert() {
+        Alert allert = new Alert(AlertType.WARNING);
+        allert.setHeaderText("Inserisci tutti i campi contrassegnati da *");
+        allert.show();
+    }
+
+    public static void allertNotExist(String message) {
+        Alert allert = new Alert(AlertType.ERROR);
+        allert.setHeaderText(message);
+        allert.show();
     }
 
 }

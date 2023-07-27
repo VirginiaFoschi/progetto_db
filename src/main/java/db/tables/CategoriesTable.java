@@ -12,15 +12,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 import db.Table;
-import model.ProgrammingMode;
+import model.Category;
 
-public final class ProgrammingModesTable implements Table<ProgrammingMode, String> {    
+public final class CategoriesTable implements Table<Category, String> {    
     
-    public static final String TABLE_NAME = "MODALITA_PROGRAMMAZIONE";
+    public static final String TABLE_NAME = "CATEGORIA";
 
     private final Connection connection; 
 
-    public ProgrammingModesTable(final Connection connection) {
+    public CategoriesTable(final Connection connection) {
         this.connection = Objects.requireNonNull(connection);
     }
 
@@ -43,64 +43,60 @@ public final class ProgrammingModesTable implements Table<ProgrammingMode, Strin
     }
 
     @Override
-    public Optional<ProgrammingMode> findByPrimaryKey(final String id) {
+    public Optional<Category> findByPrimaryKey(final String name) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE tipo = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE nomeCategoria = ?";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setString(1, id);
+            statement.setString(1, name);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
-            //    here we extract the first (and only) film from the ResultSet
-            return readProgrammingModesFromResultSet(resultSet).stream().findFirst();
+            //    here we extract the first (and only) Category from the ResultSet
+            return readCategorysFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     /**
-     * Given a ResultSet read all the films in it and collects them in a List
-     * @param resultSet a ResultSet from which the film(s) will be extracted
-     * @return a List of all the films in the ResultSet
+     * Given a ResultSet read all the Categorys in it and collects them in a List
+     * @param resultSet a ResultSet from which the Category(s) will be extracted
+     * @return a List of all the Categorys in the ResultSet
      */
-    private List<ProgrammingMode> readProgrammingModesFromResultSet(final ResultSet resultSet) {
-        final List<ProgrammingMode> programmingModes = new ArrayList<>();
+    private List<Category> readCategorysFromResultSet(final ResultSet resultSet) {
+        final List<Category> categories = new ArrayList<>();
         try {
             // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
             // before the first row. With next the pointer advances to the following row and returns 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final String type = resultSet.getString("tipo");
-                final Optional<String> viewingExperience = Optional.ofNullable(resultSet.getString("esperienza_di_visione"));
-                final String visualEffect = resultSet.getString("effetto_visivo");
-                // After retrieving all the data we create a film object
-                final ProgrammingMode programmingMode = new ProgrammingMode(type,viewingExperience,visualEffect);
-                programmingModes.add(programmingMode);
+                final String name = resultSet.getString("nomeCategoria");
+                // After retrieving all the data we create a Category object
+                final Category category = new Category(name);
+                categories.add(category);
             }
         } catch (final SQLException e) {}
-        return programmingModes;
+        return categories;
     }
 
     @Override
-    public List<ProgrammingMode> findAll() {
+    public List<Category> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
-            return readProgrammingModesFromResultSet(resultSet);
+            return readCategorysFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public boolean save(final ProgrammingMode programmingMode) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(tipo,esperienza_di_visione,effetto_visivo) VALUES (?,?,?)";
+    public boolean save(final Category category) {
+        final String query = "INSERT INTO " + TABLE_NAME + "(nomeCategoria) VALUES (?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, programmingMode.getType());
-            statement.setString(2, programmingMode.getViewingExperience().orElse(null));
-            statement.setString(3, programmingMode.getVisualEffect());
+            statement.setString(1, category.getName());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -111,10 +107,10 @@ public final class ProgrammingModesTable implements Table<ProgrammingMode, Strin
     }
 
     @Override
-    public boolean delete(final String id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE tipo = ? ";
+    public boolean delete(final String name) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE nomeCategoria = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, id);
+            statement.setString(1, name);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -122,28 +118,16 @@ public final class ProgrammingModesTable implements Table<ProgrammingMode, Strin
     }
 
     @Override
-    public boolean update(final ProgrammingMode programmingMode) {
+    public boolean update(final Category category) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "esperienza_di_visione = ?," +
-                "effetto_visivo = ?" +
-            "WHERE tipo = ? ";
+                "nomeCategoria = ?" +
+            "WHERE nomeCategoria = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1,programmingMode.getViewingExperience().orElse(null));
-            statement.setString(2,programmingMode.getVisualEffect());
-            statement.setString(3,programmingMode.getType());
+            statement.setString(1,category.getName());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public Integer getNumberOfProgrammingModes() {
-        try (final Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT COUNT(tipo) FROM " + TABLE_NAME);
-            return resultSet.getInt(1);
-        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }

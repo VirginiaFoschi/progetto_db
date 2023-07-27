@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CastController">
+    <children>
+        <TextField fx:id="name" layoutX="13.0" layoutY="25.0" promptText="nome *" />
+        <TextField fx:id="surname" layoutX="13.0" layoutY="57.0" promptText="cognome *" />
+        <TextField fx:id="nationality" layoutX="13.0" layoutY="90.0" promptText="nazionalità *" />
+        <Button fx:id="insertActor" layoutX="13.0" layoutY="123.0" mnemonicParsing="false" onAction="#insertActor" text="Inserisci attore" />
+        <Button fx:id="showInOrder" layoutX="13.0" layoutY="224.0" mnemonicParsing="false" onAction="#showInOrder" text="Visualizza attori in ordine di film" />
+        <Button fx:id="showStrangerActors" layoutX="13.0" layoutY="389.0" mnemonicParsing="false" onAction="#showStragerActors" prefHeight="26.0" prefWidth="316.0" text="Visualizza attori che non hanno mai recitato nei suoi film" textAlignment="JUSTIFY" />
+        <ComboBox fx:id="director" layoutX="103.0" layoutY="355.0" onMouseClicked="#fill" prefHeight="26.0" prefWidth="129.0" />
+        <TableView fx:id="table" layoutX="341.0" layoutY="25.0" prefHeight="612.0" prefWidth="531.0">
+        <columns>
+            <TableColumn fx:id="id" prefWidth="75.0" text="codice" />
+            <TableColumn fx:id="nome" prefWidth="124.0" text="nome" />
+            <TableColumn fx:id="cognome" prefWidth="117.60003662109375" text="cognome" />
+            <TableColumn fx:id="isRegista" prefWidth="87.99993896484375" text="regista" />
+            <TableColumn fx:id="nazionalita" prefWidth="124.79998779296875" text="nazionalità" />
+        </columns>
+        </TableView>
+        <Button fx:id="showAll" layoutX="13.0" layoutY="284.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutto" />
+        <TextField fx:id="filmID" layoutX="13.0" layoutY="465.0" promptText="codice film *" />
+        <Button fx:id="showActors" layoutX="13.0" layoutY="498.0" mnemonicParsing="false" onAction="#showActors" text="Visualizza attori" />
+        <Button fx:id="showDirector" layoutX="118.0" layoutY="498.0" mnemonicParsing="false" onAction="#showDirector" text="Visualizza regista" />
+        <Text layoutX="13.0" layoutY="373.0" strokeType="OUTSIDE" strokeWidth="0.0" text="scegli regista * :" />
+        <Button fx:id="insertDirector" layoutX="112.0" layoutY="123.0" mnemonicParsing="false" onAction="#insertDirector" text="Inserisci regista" />
+    </children></AnchorPane>
