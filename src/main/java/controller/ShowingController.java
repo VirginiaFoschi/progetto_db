@@ -174,7 +174,14 @@ public class ShowingController implements Initializable {
 
     @FXML
     void showSeats(ActionEvent event) {
-        /*mostra i posti disponibili ad una proiezione */
+        String id = filmID3.getText();
+        Date data = date3.getSelectionModel().getSelectedItem();
+        String ora = time.getSelectionModel().getSelectedItem();
+        if(!id.isEmpty() && data != null && ora != null) {
+            table2.setItems(FXCollections.observableArrayList(Controller.getSeatTable().showFreeSeats(data, ora)));
+        } else {
+            Controller.allert();
+        }
     }
 
     @FXML
@@ -188,7 +195,7 @@ public class ShowingController implements Initializable {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
         } else {
-            Controller.allert();
+            Controller.allertNotExist("inserisci prima il codice del film");
         }
     }
 
@@ -204,7 +211,7 @@ public class ShowingController implements Initializable {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
         } else {
-            Controller.allert();
+            Controller.allertNotExist("inserisci prima il codice del film e la data");
         }
     }
 
@@ -222,7 +229,7 @@ public class ShowingController implements Initializable {
 
         theater_column2.setCellValueFactory(new PropertyValueFactory<>("theater"));
         line_column.setCellValueFactory(new PropertyValueFactory<>("line"));
-        seat_column.setCellValueFactory(new PropertyValueFactory<>("numero"));
+        seat_column.setCellValueFactory(new PropertyValueFactory<>("number"));
 
         theaters.setItems(FXCollections.observableArrayList(Controller.getTheatreTable().findAll().stream().map(x->x.getId()).collect(Collectors.toList())));
         modProg.setItems(FXCollections.observableArrayList(Controller.getProgrammingModesTable().findAll().stream().map(x->x.getType()).collect(Collectors.toList())));

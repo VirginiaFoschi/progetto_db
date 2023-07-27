@@ -21,7 +21,7 @@ import utils.Utils;
 
 public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {    
     
-    public static final String TABLE_NAME = "CATEGORIA";
+    public static final String TABLE_NAME = "BIGLIETTO";
 
     private final Connection connection; 
 
@@ -110,16 +110,15 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
 
     @Override
     public boolean save(final Ticket ticket) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(dataProiezione,oraInizio,codiceSala,letteraFila,numeroPosto,dataAcquisto,cineCard,CFcliente) VALUES (?,?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(dataProiezione,oraInizio,codiceSala,letteraFila,numeroPosto,dataAcquisto,cineCard,CFcliente) VALUES (?,?,?,?,?,CURRENT_DATE(),?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1,Utils.dateToSqlDate(ticket.getDateShow()));
             statement.setTime(2,Utils.timeToSqlTime(ticket.getStartTime()));
             statement.setInt(3,ticket.getSalaID());
             statement.setString(4,ticket.getLetterLine());
             statement.setInt(5,ticket.getNumeberSeat());
-            statement.setDate(6,Utils.dateToSqlDate(ticket.getPurchaseDate()));
-            statement.setBoolean(7, ticket.isCineCard());
-            statement.setString(8,ticket.getClientID());
+            statement.setBoolean(6, ticket.isCineCard());
+            statement.setString(7,ticket.getClientID());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {

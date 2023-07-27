@@ -1,6 +1,9 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.Date;
+
+import utils.Utils;
 
 public class Ticket {
 
@@ -23,6 +26,11 @@ public class Ticket {
         this.purchaseDate = purchaseDate;
         this.cineCard = cineCard;
         this.clientID = clientID;
+    }
+
+    public Ticket(Date dateShow, String startTime, int salaID, String letterLine, int numeberSeat, boolean cineCard,
+            String clientID) {
+        this(dateShow, startTime, salaID, letterLine, numeberSeat, Utils.localDateToDate(LocalDate.now()), cineCard, clientID);
     }
 
     public Date getDateShow() {

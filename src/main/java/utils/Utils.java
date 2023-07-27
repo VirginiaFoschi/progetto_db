@@ -42,7 +42,8 @@ public final class Utils {
     }
 
     public static String sqlTimeToTime(final Time time) {
-        return time.toString();
+        String tempo = time.toString();
+        return tempo.substring(0, tempo.length() - 3);
     }
 
     public static String buildTime (final int ore, final int minuti) {
