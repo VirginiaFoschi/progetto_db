@@ -1,8 +1,6 @@
 package app;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 import db.ConnectionProvider;
 import db.tables.ActorsTable;
@@ -27,8 +25,9 @@ import db.tables.TheatersTable;
 import db.tables.TicketsTable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import model.Genre;
-import model.ProgrammingMode;
+import model.Line;
+import model.Seat;
+import model.Theater;
 
 public class Controller {
 

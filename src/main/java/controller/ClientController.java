@@ -12,13 +12,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Client;
 import utils.Utils;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 
@@ -70,7 +69,7 @@ public class ClientController implements Initializable {
     private TableColumn<Client, String> nome;
 
     @FXML
-    private TableColumn<Client, Integer> telefono;
+    private TableColumn<Client, String> telefono;
 
     @FXML
     void insertClient(ActionEvent event) {
@@ -81,13 +80,15 @@ public class ClientController implements Initializable {
         String clientTel = tel.getText();
         LocalDate date = dateOfBirth.getValue();
         if(!clientID.isEmpty() && !clientName.isEmpty() && !clienteSurname.isEmpty() && !clientMail.isEmpty()) {
-            Client client = new Client(clientID,clientName, clienteSurname, Utils.localDateToDate(date), clientTel.isEmpty() ? Optional.empty() : Optional.of(Integer.parseInt(clientTel)), clientMail);
-            Controller.getClientTable().save(client);
-            table.setItems(FXCollections.observableArrayList(Controller.getClientTable().findAll()));
+            if(clientID.length()!=16) {
+                Controller.allertNotExist("il codice fiscale deve avere esattamente 16 caratteri");
+            } else {
+                Client client = new Client(clientID,clientName, clienteSurname, Utils.localDateToDate(date), clientTel.isEmpty() ? Optional.empty() : Optional.of(clientTel), clientMail);
+                Controller.getClientTable().save(client);
+                table.setItems(FXCollections.observableArrayList(Controller.getClientTable().findAll()));
+            }
         } else {
-            Alert allert = new Alert(AlertType.WARNING);
-            allert.setHeaderText("Inserisci tutti i campi contrassegnati da *");
-            allert.show();
+            Controller.allert();
         }
     }
 
@@ -102,7 +103,7 @@ public class ClientController implements Initializable {
         nome.setCellValueFactory(new PropertyValueFactory<Client, String>("nome"));
         cognome.setCellValueFactory(new PropertyValueFactory<Client, String>("cognome"));
         dataNascita.setCellValueFactory(new PropertyValueFactory<Client, Date>("dataNascita"));
-        telefono.setCellValueFactory(new PropertyValueFactory<Client, Integer>("telefono"));
+        telefono.setCellValueFactory(x->new SimpleObjectProperty<String>(x.getValue().getTelefono().orElse(null)));
         mail_column.setCellValueFactory(new PropertyValueFactory<Client, String>("mail"));
 
         table.setItems(FXCollections.observableArrayList(Controller.getClientTable().findAll()));

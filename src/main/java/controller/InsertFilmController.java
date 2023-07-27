@@ -15,9 +15,11 @@ import javafx.stage.Stage;
 import model.Cast;
 import model.Corrispondence;
 import model.Film;
+import model.FilmDetail;
 import model.Genre;
 import model.Participation;
 import model.Period;
+import model.ProgrammingMode;
 import utils.Utils;
 
 import java.io.IOException;
@@ -81,6 +83,7 @@ public class InsertFilmController implements Initializable{
         String year = anno.getText();
         String plot = trama.getText();
         List<Genre> genre = genere.getCheckModel().getCheckedItems().stream().map(x->Controller.getGenreTable().findByPrimaryKey(x).get()).collect(Collectors.toList());
+        List<ProgrammingMode> modes = modProg.getCheckModel().getCheckedItems().stream().map(x->Controller.getProgrammingModesTable().findByPrimaryKey(x).get()).collect(Collectors.toList());
         if (!title.isEmpty() && !actors.isEmpty() && director != null 
             && startDate !=null && endDate !=null && startDate.isBefore(endDate) &&
             !duration.isEmpty() && !year.isEmpty() && !genre.isEmpty()) {
@@ -89,11 +92,10 @@ public class InsertFilmController implements Initializable{
                 Film film = new Film(title, Integer.parseInt(duration), Integer.parseInt(year), Optional.of(plot),period,director.getId());
                 Controller.getFilmsTable().save(film);
                 int filmID = Controller.getFilmsTable().getLastID();
-                System.out.println(filmID);
                 genre.forEach(x->Controller.getCorrispondenceTable().save(new Corrispondence(filmID, x.getType())));
                 actors.forEach(x->Controller.getParticipationTable().save(new Participation(filmID, x.getId())));
+                modes.forEach(x->Controller.getFilmDetailTable().save(new FilmDetail(x.getType(), filmID)));
                 ((Stage)(((Button)event.getSource()).getScene().getWindow())).close();
-                Controller.view();
             }
         else {
             Controller.allert();

@@ -79,7 +79,7 @@ public final class ClientsTable implements Table<Client, String> {
                 final String nome = resultSet.getString("nome");
                 final String cognome = resultSet.getString("cognome");
                 final Date dataNascita = Utils.sqlDateToDate(resultSet.getDate("dataNascita"));
-                final Optional<Integer> telefono = Optional.ofNullable(resultSet.getInt("telefono"));
+                final Optional<String> telefono = Optional.ofNullable(resultSet.getString("telefono"));
                 final String mail = resultSet.getString("mail");
                 // After retrieving all the data we create a film object
                 final Client client = new Client(id,nome,cognome,dataNascita,telefono,mail);
@@ -107,7 +107,7 @@ public final class ClientsTable implements Table<Client, String> {
             statement.setString(2, client.getNome());
             statement.setString(3, client.getCognome());
             statement.setDate(4,Utils.dateToSqlDate(client.getDataNascita()));
-            statement.setInt(5, client.getTelefono().orElse(null));
+            statement.setString(5, client.getTelefono().orElse(null));
             statement.setString(6, client.getMail());
             statement.executeUpdate();
             return true;
@@ -143,7 +143,7 @@ public final class ClientsTable implements Table<Client, String> {
             statement.setString(1,client.getNome());
             statement.setString(2,client.getCognome());
             statement.setDate(3, Utils.dateToSqlDate(client.getDataNascita()));
-            statement.setInt(4, client.getTelefono().orElse(null));
+            statement.setString(4, client.getTelefono().orElse(null));
             statement.setString(5,client.getMail());
             statement.setString(6,client.getCf());
             return statement.executeUpdate() > 0;

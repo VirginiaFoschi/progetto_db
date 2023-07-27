@@ -14,11 +14,10 @@
 
 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ShowingController">
     <children>
-        <TextField fx:id="filmID" layoutX="13.0" layoutY="14.0" promptText="codice film" />
-        <TextField fx:id="startTime" layoutX="13.0" layoutY="79.0" promptText="ora Inizio" />
-        <TextField fx:id="theaterID" layoutX="13.0" layoutY="111.0" promptText="codice sala" />
-        <Button fx:id="insertShow" layoutX="13.0" layoutY="143.0" mnemonicParsing="false" onAction="#insertShow" text="Inserisci proiezione" />
-        <TableView layoutX="219.0" layoutY="15.0" prefHeight="354.0" prefWidth="619.0">
+        <TextField fx:id="filmID" layoutX="13.0" layoutY="14.0" prefHeight="26.0" prefWidth="160.0" promptText="codice film *" />
+        <TextField fx:id="startTime" layoutX="13.0" layoutY="79.0" prefHeight="26.0" prefWidth="161.0" promptText="ora Inizio *" />
+        <Button fx:id="insertShow" layoutX="13.0" layoutY="176.0" mnemonicParsing="false" onAction="#insertShow" prefHeight="22.0" prefWidth="118.0" text="Inserisci proiezione" />
+        <TableView fx:id="table1" layoutX="219.0" layoutY="15.0" prefHeight="354.0" prefWidth="619.0">
         <columns>
             <TableColumn fx:id="film_column" prefWidth="97.60005187988281" text="film" />
             <TableColumn fx:id="date_column" prefWidth="96.0" text="data" />
@@ -28,19 +27,21 @@
             <TableColumn fx:id="allSeats" prefWidth="105.5999755859375" text="N. posti totali" />
         </columns>
         </TableView>
-        <TextField fx:id="filmID2" layoutX="13.0" layoutY="194.0" promptText="codice film" />
-        <Button fx:id="show" layoutX="13.0" layoutY="228.0" mnemonicParsing="false" onAction="#show" text="Visualizza proiezioni" />
-        <TextField fx:id="filmID3" layoutX="13.0" layoutY="427.0" promptText="codice film" />
+        <TextField fx:id="filmID2" layoutX="13.0" layoutY="241.0" promptText="codice film *" />
+        <Button fx:id="show" layoutX="13.0" layoutY="274.0" mnemonicParsing="false" onAction="#show" text="Visualizza proiezioni" />
+        <TextField fx:id="filmID3" layoutX="13.0" layoutY="427.0" promptText="codice film *" />
         <Button fx:id="showSeats" layoutX="13.0" layoutY="529.0" mnemonicParsing="false" onAction="#showSeats" text="Posti disponibili" />
-        <ComboBox fx:id="time" layoutX="13.0" layoutY="492.0" prefWidth="149.6" promptText="ora" />
-        <TableView layoutX="219.0" layoutY="400.0" prefHeight="236.0" prefWidth="374.0">
+        <ComboBox fx:id="time" layoutX="13.0" layoutY="492.0" onMouseClicked="#updateTime" prefWidth="149.6" promptText="ora *" />
+        <TableView fx:id="table2" layoutX="219.0" layoutY="400.0" prefHeight="236.0" prefWidth="374.0">
         <columns>
             <TableColumn fx:id="theater_column2" prefWidth="110.40003967285156" text="sala" />
             <TableColumn fx:id="line_column" prefWidth="120.0" text="fila" />
             <TableColumn fx:id="seat_column" prefWidth="144.0" text="posto" />
         </columns>
         </TableView>
-        <Button fx:id="showAll" layoutX="13.0" layoutY="295.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutte le proiezioni" />
-        <ComboBox fx:id="date3" layoutX="13.0" layoutY="460.0" prefWidth="149.6" promptText="data" />
-        <DatePicker fx:id="date" layoutX="13.0" layoutY="46.0" prefHeight="26.0" prefWidth="149.6" promptText="data" />
+        <Button fx:id="showAll" layoutX="13.0" layoutY="333.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutte le proiezioni" />
+        <ComboBox fx:id="date3" layoutX="13.0" layoutY="460.0" onMouseClicked="#updateDate" prefWidth="149.6" promptText="data *" />
+        <DatePicker fx:id="date" layoutX="13.0" layoutY="46.0" prefHeight="26.0" prefWidth="160.0" promptText="data *" />
+        <ComboBox fx:id="theaters" layoutX="13.0" layoutY="111.0" prefHeight="26.0" prefWidth="161.0" promptText="codice sala *" />
+        <ComboBox fx:id="modProg" layoutX="13.0" layoutY="144.0" prefHeight="26.0" prefWidth="162.0" promptText="modalità proiezione *" />
     </children></AnchorPane>

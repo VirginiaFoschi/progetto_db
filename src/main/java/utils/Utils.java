@@ -33,6 +33,10 @@ public final class Utils {
         return sqlDateToDate(java.sql.Date.valueOf(date));
     }
 
+    public static java.sql.Date localDateToSQLDate (LocalDate date) {
+        return java.sql.Date.valueOf(date);
+    }
+
     public static Time timeToSqlTime(final String time) {
         return Time.valueOf(time.concat(":00"));
     }

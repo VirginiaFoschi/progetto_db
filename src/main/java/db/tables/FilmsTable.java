@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
@@ -180,5 +181,25 @@ public final class FilmsTable implements Table<Film, Integer> {
                 .map(x->findByPrimaryKey(x).orElse(null))
                 .filter(x->x!=null)
                 .collect(Collectors.toList());
-    } 
+    }
+    
+
+    public Boolean checkPeriod(final Integer id, final LocalDate date) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ? AND DATEDIFF(?,dataInizio) >= 0 AND DATEDIFF(dataFine,?) >= 0 ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setInt(1, id);
+            statement.setDate(2,Utils.localDateToSQLDate(date));
+            statement.setDate(3,Utils.localDateToSQLDate(date));
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return resultSet.next();
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

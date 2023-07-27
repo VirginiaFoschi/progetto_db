@@ -8,12 +8,12 @@ public class Client {
     private final String cf;
     private final String nome;
     private final String cognome;
-    private final Optional<Integer> telefono;
+    private final Optional<String> telefono;
     private final Date dataNascita;
 
     private final String mail;
     
-    public Client(String cf, String nome, String cognome, Date dataNascita, Optional<Integer> telefono, String mail) {
+    public Client(String cf, String nome, String cognome, Date dataNascita, Optional<String> telefono, String mail) {
         this.cf = cf;
         this.nome = nome;
         this.cognome = cognome;
@@ -38,7 +38,7 @@ public class Client {
         return dataNascita;
     }
 
-    public Optional<Integer> getTelefono() {
+    public Optional<String> getTelefono() {
         return telefono;
     }
 

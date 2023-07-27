@@ -157,4 +157,16 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Fil
         }
     }
 
+    public boolean hasSelectedMode(final int filmId, final String type) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ? AND tipo = ? ";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1,filmId);
+            statement.setString(2, type);
+            final ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }
