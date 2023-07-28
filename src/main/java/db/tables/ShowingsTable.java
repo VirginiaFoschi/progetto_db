@@ -109,6 +109,7 @@ public final class ShowingsTable implements Table<Showing, Pair<Date,String>> {
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1, Utils.dateToSqlDate(showing.getData()));
             statement.setTime(2,Utils.timeToSqlTime(showing.getStartTime()));
+            System.out.println(showing.getStartTime());
             statement.setInt(3,showing.getTheaterID());
             statement.setInt(4, showing.getNumberSpectator());
             statement.setInt(5, showing.getFilmID());
@@ -116,6 +117,7 @@ public final class ShowingsTable implements Table<Showing, Pair<Date,String>> {
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
+            System.out.println(e);
             return false;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);

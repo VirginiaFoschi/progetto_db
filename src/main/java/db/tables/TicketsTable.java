@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import db.Table;
+import javafx.util.Callback;
 import model.Seat;
 import model.Showing;
 import model.Ticket;
@@ -116,7 +117,7 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
             statement.setTime(2,Utils.timeToSqlTime(ticket.getStartTime()));
             statement.setInt(3,ticket.getSalaID());
             statement.setString(4,ticket.getLetterLine());
-            statement.setInt(5,ticket.getNumeberSeat());
+            statement.setInt(5,ticket.getNumberSeat());
             statement.setBoolean(6, ticket.isCineCard());
             statement.setString(7,ticket.getClientID());
             statement.executeUpdate();
@@ -157,12 +158,29 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
             statement.setString(3,ticket.getClientID());
             statement.setInt(4, ticket.getSalaID());
             statement.setString(5, ticket.getLetterLine());
-            statement.setInt(6,ticket.getNumeberSeat());
+            statement.setInt(6,ticket.getNumberSeat());
             statement.setDate(7,Utils.dateToSqlDate(ticket.getDateShow()));
             statement.setTime(8,Utils.timeToSqlTime(ticket.getStartTime()));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<Ticket> getClientTickets(final String clientCF) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CFcliente = ? ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setString(1, clientCF);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) Ticket from the ResultSet
+            return readTicketsFromResultSet(resultSet);
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -54,7 +54,10 @@ public class Seat {
             return false;
         return true;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Seat [line=" + line + ", number=" + number + ", theater=" + theater + "]";
+    }
     
 }

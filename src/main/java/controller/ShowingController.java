@@ -111,7 +111,8 @@ public class ShowingController implements Initializable {
             int film = Integer.parseInt(id);
             if(check(film,data) && isTheaterEmpty(codiceSala,data,ora,Controller.getFilmsTable().findByPrimaryKey(film).get().getDuration()) && hasSelectedMode(programmingMode,film)) {
                 Showing showing = new Showing(Utils.localDateToDate(data), ora,0, codiceSala,Integer.parseInt(id),programmingMode);
-                Controller.getShowingTable().save(showing);
+                boolean b=Controller.getShowingTable().save(showing);
+                System.out.println(b);
                 table1.setItems(FXCollections.observableArrayList(Controller.getShowingTable().findAll()));
             }
         } else {

@@ -19,13 +19,13 @@
             <Font size="18.0" />
             </font>
         </Text>
-        <TextField fx:id="filmID" layoutX="64.0" layoutY="99.0" promptText="codice film" />
-        <ComboBox fx:id="date" layoutX="64.0" layoutY="132.0" prefHeight="26.0" prefWidth="71.0" promptText="data" />
-        <ComboBox fx:id="time" layoutX="146.0" layoutY="132.0" prefHeight="26.0" prefWidth="67.0" promptText="ora" />
-        <ComboBox fx:id="seat" layoutX="64.0" layoutY="166.0" prefWidth="150.0" promptText="posto" />
-        <TextField fx:id="cf" layoutX="64.0" layoutY="67.0" promptText="codice fiscale cliente" />
-        <Button fx:id="buyTicket" layoutX="65.0" layoutY="229.0" mnemonicParsing="false" text="Acquista biglietto" />
-        <TableView layoutX="232.0" layoutY="25.0" prefHeight="322.0" prefWidth="647.0">
+        <TextField fx:id="filmID" layoutX="64.0" layoutY="99.0" promptText="codice film *" />
+        <ComboBox fx:id="date" layoutX="64.0" layoutY="132.0" onMouseClicked="#updateDate" prefHeight="26.0" prefWidth="75.0" promptText="data *" />
+        <ComboBox fx:id="time" layoutX="142.0" layoutY="132.0" onMouseClicked="#updateTime" prefHeight="26.0" prefWidth="71.0" promptText="ora *" />
+        <ComboBox fx:id="seat" layoutX="64.0" layoutY="166.0" onMouseClicked="#updateSeats" prefWidth="150.0" promptText="posto *" />
+        <TextField fx:id="cf" layoutX="64.0" layoutY="67.0" promptText="codice fiscale cliente *" />
+        <Button fx:id="buyTicket" layoutX="64.0" layoutY="229.0" mnemonicParsing="false" onAction="#buyTicket" text="Acquista biglietto" />
+        <TableView fx:id="table1" layoutX="232.0" layoutY="25.0" prefHeight="322.0" prefWidth="647.0">
         <columns>
             <TableColumn fx:id="cf_column" prefWidth="75.0" text="CF" />
             <TableColumn fx:id="data" prefWidth="75.0" text="data" />
@@ -38,24 +38,24 @@
             <TableColumn fx:id="prezzo" prefWidth="67.199951171875" text="prezzo" />
         </columns>
         </TableView>
-        <TextField fx:id="cf2" layoutX="64.0" layoutY="291.0" promptText="codice fiscale cliente" />
-        <Button fx:id="showTickets" layoutX="63.0" layoutY="320.0" mnemonicParsing="false" text="Visualizza biglietti" />
+        <TextField fx:id="cf2" layoutX="64.0" layoutY="291.0" promptText="codice fiscale cliente *" />
+        <Button fx:id="showTickets" layoutX="64.0" layoutY="320.0" mnemonicParsing="false" onAction="#showTickets" text="Visualizza biglietti" />
         <Text layoutX="26.0" layoutY="399.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Acquisto Cinecard (nella tabella sono mostrate le diverse tipologie disponibili) :">
             <font>
             <Font size="18.0" />
             </font>
         </Text>
-        <TableView layoutX="232.0" layoutY="428.0" prefHeight="223.0" prefWidth="424.0">
+        <TableView fx:id="table2" layoutX="232.0" layoutY="428.0" prefHeight="223.0" prefWidth="424.0">
         <columns>
             <TableColumn fx:id="totalEntrances" prefWidth="153.59999084472656" text="N. ingressi totali" />
             <TableColumn fx:id="price" prefWidth="147.20001220703125" text="prezzo" />
             <TableColumn fx:id="months" prefWidth="119.20001220703125" text="mesi validità" />
         </columns>
         </TableView>
-        <TextField fx:id="cf3" layoutX="64.0" layoutY="428.0" promptText="codice fiscale cliente" />
-        <ComboBox fx:id="numberEntrances" layoutX="63.0" layoutY="461.0" prefWidth="150.0" promptText="numero ingressi" />
-        <Button fx:id="buyCinecard" layoutX="64.0" layoutY="496.0" mnemonicParsing="false" text="Acquista cinecard" />
-        <Text layoutX="64.0" layoutY="215.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cinecard?" wrappingWidth="49.78125" />
-        <ComboBox fx:id="cinecard" layoutX="119.0" layoutY="197.0" prefHeight="23.0" prefWidth="94.0" />
+        <TextField fx:id="cf3" layoutX="64.0" layoutY="428.0" promptText="codice fiscale cliente *" />
+        <ComboBox fx:id="numberEntrances" layoutX="64.0" layoutY="461.0" prefWidth="150.0" promptText="numero ingressi *" />
+        <Button fx:id="buyCinecard" layoutX="64.0" layoutY="496.0" mnemonicParsing="false" onAction="#buyCineCard" text="Acquista cinecard" />
+        <Text layoutX="64.0" layoutY="215.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cinecard ? *" wrappingWidth="72.18124389648438" />
+        <ComboBox fx:id="cinecard" layoutX="143.0" layoutY="197.0" prefHeight="26.0" prefWidth="70.0" />
     </children>
 </AnchorPane>

@@ -11,18 +11,18 @@ public class Ticket {
     private final String startTime;
     private final int salaID;
     private final String letterLine;
-    private final int numeberSeat;
+    private final int numberSeat;
     private final Date purchaseDate;
     private final boolean cineCard;
     private final String clientID;
     
-    public Ticket(Date dateShow, String startTime, int salaID, String letterLine, int numeberSeat, Date purchaseDate,
+    public Ticket(Date dateShow, String startTime, int salaID, String letterLine, int numberSeat, Date purchaseDate,
             boolean cineCard, String clientID) {
         this.dateShow = dateShow;
         this.startTime = startTime;
         this.salaID = salaID;
         this.letterLine = letterLine;
-        this.numeberSeat = numeberSeat;
+        this.numberSeat = numberSeat;
         this.purchaseDate = purchaseDate;
         this.cineCard = cineCard;
         this.clientID = clientID;
@@ -49,8 +49,8 @@ public class Ticket {
         return letterLine;
     }
 
-    public int getNumeberSeat() {
-        return numeberSeat;
+    public int getNumberSeat() {
+        return numberSeat;
     }
 
     public Date getPurchaseDate() {
@@ -73,7 +73,7 @@ public class Ticket {
         result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
         result = prime * result + salaID;
         result = prime * result + ((letterLine == null) ? 0 : letterLine.hashCode());
-        result = prime * result + numeberSeat;
+        result = prime * result + numberSeat;
         result = prime * result + ((purchaseDate == null) ? 0 : purchaseDate.hashCode());
         result = prime * result + (cineCard ? 1231 : 1237);
         result = prime * result + ((clientID == null) ? 0 : clientID.hashCode());
@@ -106,7 +106,7 @@ public class Ticket {
                 return false;
         } else if (!letterLine.equals(other.letterLine))
             return false;
-        if (numeberSeat != other.numeberSeat)
+        if (numberSeat != other.numberSeat)
             return false;
         if (purchaseDate == null) {
             if (other.purchaseDate != null)
@@ -126,7 +126,7 @@ public class Ticket {
     @Override
     public String toString() {
         return "Ticket [dateShow=" + dateShow + ", startTime=" + startTime + ", salaID=" + salaID + ", letterLine="
-                + letterLine + ", numeberSeat=" + numeberSeat + ", purchaseDate=" + purchaseDate + ", cineCard="
+                + letterLine + ", numeberSeat=" + numberSeat + ", purchaseDate=" + purchaseDate + ", cineCard="
                 + cineCard + ", clientID=" + clientID + "]";
     }
 
