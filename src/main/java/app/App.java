@@ -57,5 +57,13 @@ public class App extends Application {
         st.show();
     }
 
+    public void showRates() throws IOException {
+        Parent root = FXMLLoader.load(ClassLoader.getSystemResource("prices.fxml"));
+        Scene scene = new Scene(root);
+        Stage st = new Stage();
+        st.setScene(scene);
+        st.show();
+    }
+
     
 }

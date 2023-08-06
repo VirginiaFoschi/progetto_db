@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import app.Controller;
 import utils.Utils;
 
 import db.Table;
@@ -203,5 +204,16 @@ public final class FilmsTable implements Table<Film, Integer> {
         }
     }
 
-
+    public List<Film> getFilmsOnDate(final Date date) {
+        final String query = "SELECT F.* "+
+                            "FROM " + TABLE_NAME + " F, " + Controller.getShowingTable().getTableName() + " S " +
+                            "WHERE F.codiceFilm = S.codiceFilm AND data = ? ";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setDate(1,Utils.dateToSqlDate(date));
+            final ResultSet resultSet = statement.executeQuery();
+            return readFilmsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

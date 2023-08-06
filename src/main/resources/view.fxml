@@ -33,11 +33,6 @@
                 <fx:include fx:id="client" source="client.fxml"/>
             </content>
         </Tab>
-        <Tab text="Cinecard">
-            <content>
-                <fx:include fx:id="cinecard" source="cinecard.fxml"/>
-            </content>
-        </Tab>
         <Tab text="Negozio">
             <content>
                 <fx:include fx:id="shop" source="shop.fxml"/>

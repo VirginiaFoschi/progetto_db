@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="653.0" prefWidth="475.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PriceController">
+    <header>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="609.0" prefWidth="475.0">
+         <children>
+            <Text layoutX="139.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="I NOSTRI PREZZI : " textAlignment="CENTER" wrappingWidth="197.8616943359375">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <TableView fx:id="prices" layoutX="79.0" layoutY="67.0" prefHeight="200.0" prefWidth="317.0">
+              <columns>
+                <TableColumn fx:id="category" prefWidth="104.0" text="categoria" />
+                <TableColumn fx:id="years" prefWidth="145.60003662109375" text="età" />
+                  <TableColumn fx:id="priceTicket" prefWidth="68.800048828125" text="prezzo" />
+              </columns>
+            </TableView>
+            <Text layoutX="110.0" layoutY="343.0" strokeType="OUTSIDE" strokeWidth="0.0" text="LE NOSTRE CINECARD : ">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <TableView fx:id="cineCards" layoutX="79.0" layoutY="360.0" prefHeight="194.0" prefWidth="317.0">
+              <columns>
+                <TableColumn fx:id="numberEntrances" prefWidth="104.800048828125" text="N. igressi" />
+                <TableColumn fx:id="monthsValidity" prefWidth="124.79998779296875" text="mesi validità" />
+                  <TableColumn fx:id="priceCinecard" prefWidth="89.5999755859375" text="prezzo" />
+              </columns>
+            </TableView>
+         </children></AnchorPane>
+    </header>
+    <content>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
+    </content>
+    <expandableContent>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
+    </expandableContent>
+</DialogPane>

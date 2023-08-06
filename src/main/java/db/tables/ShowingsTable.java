@@ -15,11 +15,13 @@ import java.util.Optional;
 
 import app.Controller;
 import db.Table;
+import model.FilmDetail;
 import model.Showing;
 import utils.Pair;
+import utils.Triplets;
 import utils.Utils;
 
-public final class ShowingsTable implements Table<Showing, Pair<Date,String>> {    
+public final class ShowingsTable implements Table<Showing, Triplets<Date,String,FilmDetail>> {    
     
     public static final String TABLE_NAME = "PROIEZIONE";
 
@@ -48,14 +50,16 @@ public final class ShowingsTable implements Table<Showing, Pair<Date,String>> {
     }
 
     @Override
-    public Optional<Showing> findByPrimaryKey(final Pair<Date,String> id) {
+    public Optional<Showing> findByPrimaryKey(final Triplets<Date,String,FilmDetail> id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE data = ? AND oraInizio = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE data = ? AND oraInizio = ? AND codiceFilm = ? AND tipo = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
             statement.setDate(1, Utils.dateToSqlDate(id.getX()));
             statement.setTime(2,Utils.timeToSqlTime(id.getY()));
+            statement.setInt(3, id.getZ().getFilmID());
+            statement.setString(4, id.getZ().getFilmType());
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
@@ -125,11 +129,13 @@ public final class ShowingsTable implements Table<Showing, Pair<Date,String>> {
     }
 
     @Override
-    public boolean delete(final Pair<Date,String> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE data = ? AND oraInizio = ? ";
+    public boolean delete(final Triplets<Date,String,FilmDetail> id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE data = ? AND oraInizio = ? AND codiceFilm = ? AND tipo = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1, Utils.dateToSqlDate(id.getX()));
             statement.setTime(2,Utils.timeToSqlTime(id.getY()));
+            statement.setInt(3, id.getZ().getFilmID());
+            statement.setString(4, id.getZ().getFilmType());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -141,10 +147,8 @@ public final class ShowingsTable implements Table<Showing, Pair<Date,String>> {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
                 "codiceSala = ?," +
-                "numeroSpettatori = ?," +
-                "codiceFilm = ?," +
-                "tipo = ? "+
-            "WHERE data = ? AND oraInizio = ? ";
+                "numeroSpettatori = ? " +
+            "WHERE codiceFilm = ? AND tipo = ? AND data = ? AND oraInizio = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1,showing.getTheaterID());
             statement.setInt(2,showing.getNumberSpectator());
@@ -250,6 +254,23 @@ public final class ShowingsTable implements Table<Showing, Pair<Date,String>> {
                 statement.setInt(8,duration);
                 final ResultSet resultSet = statement.executeQuery();
                 return !resultSet.next();
+            } catch (final SQLException e) {
+                throw new IllegalStateException(e);
+            }
+    }
+
+    public boolean areOtherShowings(int film, LocalDate data, String ora) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " P, " + Controller.getFilmsTable().getTableName() + " F " +
+                                "WHERE P.codiceFilm = F.codiceFilm " + 
+                                "AND P.codiceFilm = ? " +
+                                "AND P.data = ? AND DATE_ADD(P.oraInizio , INTERVAL F.durata MINUTE) >= ? ";
+                                /*da modificare se si vuole fare in modo di poter proiettare due versioni diverse dello stesso film contemporaneamente */
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+                statement.setInt(1,film);
+                statement.setDate(2,Utils.localDateToSQLDate(data));
+                statement.setTime(3,Utils.timeToSqlTime(ora));
+                final ResultSet resultSet = statement.executeQuery();
+                return resultSet.next();
             } catch (final SQLException e) {
                 throw new IllegalStateException(e);
             }

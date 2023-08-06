@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import app.Controller;
 import utils.Pair;
 import utils.Utils;
 
 import db.Table;
 import model.CineCard;
+import model.CinecardType;
 import model.Client;
 
 public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> {    
@@ -149,4 +151,58 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
         }
     }
 
+    public Optional<CineCard> getNewer(final String client) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CF = ?  ORDER BY dataAcquisto ASC LIMIT 1";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setString(1,client);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return readCineCardsFromResultSet(resultSet).stream().findFirst();
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<CineCard> getCinecardFromClient(final String cf) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CF = ? ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setString(1,cf);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return readCineCardsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Optional<CineCard> hasCinecardValid(final String cf) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * "+
+                            "FROM " + TABLE_NAME + " C, " + Controller.getCinecardTypeTable().getTableName() + " CT "+
+                            "WHERE C.numeroIngressiTotali = CT.numeroIngressiTotali "+
+                            "AND CF = ? AND numeroIngressiDisponibili > 0 "+
+                            "AND DATE_ADD(dataAcquisto,INTERVAL CT.mesiValidità MONTH) >= NOW() ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setString(1,cf);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return readCineCardsFromResultSet(resultSet).stream().findFirst();
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

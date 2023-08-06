@@ -109,7 +109,8 @@ public class ShowingController implements Initializable {
         String programmingMode = modProg.getSelectionModel().getSelectedItem();
         if(!id.isEmpty() && data!= null && !ora.isEmpty() && codiceSala != null && programmingMode !=null) {
             int film = Integer.parseInt(id);
-            if(check(film,data) && isTheaterEmpty(codiceSala,data,ora,Controller.getFilmsTable().findByPrimaryKey(film).get().getDuration()) && hasSelectedMode(programmingMode,film)) {
+            if(check(film,data) && isTheaterEmpty(codiceSala,data,ora,Controller.getFilmsTable().findByPrimaryKey(film).get().getDuration()) 
+            && hasSelectedMode(programmingMode,film) && areNotOtherShowings(film,data,ora)) {
                 Showing showing = new Showing(Utils.localDateToDate(data), ora,0, codiceSala,Integer.parseInt(id),programmingMode);
                 boolean b=Controller.getShowingTable().save(showing);
                 System.out.println(b);
@@ -120,11 +121,20 @@ public class ShowingController implements Initializable {
         }
     }
 
+    private boolean areNotOtherShowings(int film, LocalDate data, String ora) {
+        if(Controller.getShowingTable().areOtherShowings(film,data,ora)) {
+            Controller.allertNotExist("il film scelto è già proiettato in un'altra sala");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private boolean hasSelectedMode(String programmingMode, Integer id) {
         if(Controller.getFilmDetailTable().hasSelectedMode(id,programmingMode)) {
             return true;
         } else {
-            Controller.allertNotExist("il film scelto non non è disponibile nella modalità di proiezione selezionata");
+            Controller.allertNotExist("il film scelto non è disponibile nella modalità di proiezione selezionata");
             return false;
         }
     }

@@ -2,17 +2,17 @@ package model;
 
 public class Rate {
 
-    private final String categoria;
+    private final Category categoria;
     private final double prezzo;
     private final String tipo;
 
-    public Rate(String categoria, double prezzo, String tipo) {
+    public Rate(Category categoria, double prezzo, String tipo) {
         this.categoria = categoria;
         this.prezzo = prezzo;
         this.tipo = tipo;
     }
 
-    public String getCategoria() {
+    public Category getCategoria() {
         return categoria;
     }
 

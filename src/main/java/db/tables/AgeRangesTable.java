@@ -7,16 +7,15 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import utils.Pair;
-import utils.Utils;
-
+import app.Controller;
 import db.Table;
 import model.AgeRange;
+import model.Category;
+import model.Client;
 
 public final class AgeRangesTable implements Table<AgeRange, Integer> {    
     
@@ -81,7 +80,7 @@ public final class AgeRangesTable implements Table<AgeRange, Integer> {
                 final int etaMin = resultSet.getInt("etaMin");
                 final int etaMax = resultSet.getInt("etaMax");
                 // After retrieving all the data we create a film object
-                final AgeRange ageRange = new AgeRange(etaMin,etaMax,category);
+                final AgeRange ageRange = new AgeRange(etaMin,etaMax,new Category(category));
                 ageRanges.add(ageRange);
             }
         } catch (final SQLException e) {}
@@ -104,7 +103,7 @@ public final class AgeRangesTable implements Table<AgeRange, Integer> {
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, ageRange.getEtaMin());
             statement.setInt(2, ageRange.getEtaMax());
-            statement.setString(3, ageRange.getCategoria());
+            statement.setString(3, ageRange.getCategoria().getName());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -134,11 +133,53 @@ public final class AgeRangesTable implements Table<AgeRange, Integer> {
             "WHERE etaMin = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1,ageRange.getEtaMax());
-            statement.setString(2,ageRange.getCategoria());
+            statement.setString(2,ageRange.getCategoria().getName());
             statement.setInt(3,ageRange.getEtaMin());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<AgeRange> getFromCategory(final Category category) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE nomeCategoria = ? ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setString(1, category.getName());
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return readAgeRangesFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Double getPriceFromEta(final String cliente, final String type) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT T.prezzo "+
+                            "FROM " + TABLE_NAME + " E, " + Controller.getCategoryTable().getTableName() + " C, " + Controller.getRateTable().getTableName() + " T " +
+                            "WHERE E.nomeCategoria = C.nomeCategoria AND C.nomeCategoria = T.nomeCategoria " +
+                            "AND E.etaMin <= ? AND etaMax >= ? " +
+                            "AND T.tipo = ? ";
+        final int eta = Controller.getClientTable().getYears(cliente);
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setInt(1, eta);
+            statement.setInt(2, eta);
+            statement.setString(3, type);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            resultSet.next();
+            return resultSet.getDouble("prezzo");
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }

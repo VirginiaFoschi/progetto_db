@@ -83,7 +83,7 @@ public final class RatesTable implements Table<Rate, Pair<Category,String>> {
                 final String type = resultSet.getString("tipo");
                 final double price = resultSet.getDouble("prezzo");
                 // After retrieving all the data we create a film object
-                final Rate rate = new Rate(category,price,type);
+                final Rate rate = new Rate(new Category(category),price,type);
                 rates.add(rate);
             }
         } catch (final SQLException e) {}
@@ -104,7 +104,7 @@ public final class RatesTable implements Table<Rate, Pair<Category,String>> {
     public boolean save(final Rate rate) {
         final String query = "INSERT INTO " + TABLE_NAME + "(nomeCategoria,tipo,prezzo) VALUES (?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, rate.getCategoria());
+            statement.setString(1, rate.getCategoria().getName());
             statement.setString(2, rate.getTipo());
             statement.setDouble(3, rate.getPrezzo());
             statement.executeUpdate();
@@ -136,7 +136,7 @@ public final class RatesTable implements Table<Rate, Pair<Category,String>> {
             "WHERE nomeCategoria = ? AND tipo = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDouble(1,rate.getPrezzo());
-            statement.setString(2,rate.getCategoria());
+            statement.setString(2,rate.getCategoria().getName());
             statement.setString(3,rate.getTipo());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {

@@ -153,13 +153,13 @@ public final class ClientsTable implements Table<Client, String> {
         }
     }
 
-    public Integer getYears(final int id) {
+    public Integer getYears(final String id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT CF, DATEDIFF(CURRENT_DATE(),dataNascita) AS ETA FROM " + TABLE_NAME + " WHERE CF = ? ";
+        final String query = "SELECT CF, TIMESTAMPDIFF(YEAR,dataNascita,CURRENT_DATE()) AS ETA FROM " + TABLE_NAME + " WHERE CF = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setInt(1, id);
+            statement.setString(1, id);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 

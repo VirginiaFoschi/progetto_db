@@ -151,6 +151,10 @@ public class Controller {
         app.view();
     }
 
+    public static void showRates() throws IOException {
+        app.showRates();
+    }
+
     public static void allert() {
         Alert allert = new Alert(AlertType.WARNING);
         allert.setHeaderText("Inserisci tutti i campi contrassegnati da *");

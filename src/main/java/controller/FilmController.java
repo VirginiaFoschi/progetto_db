@@ -25,6 +25,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Film;
 import model.FilmExtension;
+import utils.Utils;
 
 public class FilmController implements Initializable {
 
@@ -130,7 +131,7 @@ public class FilmController implements Initializable {
     @FXML
     void showFilm(ActionEvent event) {
         LocalDate data = date.getValue();
-        //da fare in proiezioni
+        updateTable(Controller.getFilmsTable().getFilmsOnDate(Utils.localDateToDate(data)));
     }
 
     @Override

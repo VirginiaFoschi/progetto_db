@@ -169,4 +169,22 @@ public final class FilmDetailsTable implements Table<FilmDetail, Pair<String,Fil
         }
     }
 
+    public List<String> getFilmModes(final int filmId) {
+        final String query = "SELECT tipo FROM " + TABLE_NAME + " WHERE codiceFilm = ? ";
+        final List<String> types = new ArrayList<>();
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1,filmId);
+            final ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                // To get the values of the columns of the row currently pointed we use the get methods 
+                final String filmType = resultSet.getString("tipo");
+                // After retrieving all the data we create a FilmDetail object
+                types.add(filmType);
+            }
+            return types;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }

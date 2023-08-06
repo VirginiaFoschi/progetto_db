@@ -4,9 +4,9 @@ public class AgeRange {
     
     private final int etaMin;
     private final int etaMax;
-    private final String categoria;
+    private final Category categoria;
 
-    public AgeRange(int etaMin, int etaMax, String categoria) {
+    public AgeRange(int etaMin, int etaMax, Category categoria) {
         this.etaMin = etaMin;
         this.etaMax = etaMax;
         this.categoria = categoria;
@@ -20,7 +20,7 @@ public class AgeRange {
         return etaMax;
     }
 
-    public String getCategoria() {
+    public Category getCategoria() {
         return categoria;
     }
     

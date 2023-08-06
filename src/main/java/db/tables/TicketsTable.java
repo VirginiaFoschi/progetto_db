@@ -51,7 +51,7 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
     @Override
     public Optional<Ticket> findByPrimaryKey(final Pair<Seat,Showing> id) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceSala = ? AND letteraFila = ? AND numeroPosto = ? AND dataProiezione = ? AND oraInizio = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceSala = ? AND letteraFila = ? AND numeroPosto = ? AND dataProiezione = ? AND oraInizio = ? AND codiceFilm = ? AND tipo = ? ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -60,6 +60,8 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
             statement.setInt(3,id.getX().getNumber());
             statement.setDate(4,Utils.dateToSqlDate(id.getY().getData()));
             statement.setTime(5,Utils.timeToSqlTime(id.getY().getStartTime()));
+            statement.setInt(6, id.getY().getFilmID());
+            statement.setString(7, id.getY().getProgrammingMode());
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
@@ -91,8 +93,10 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
                 final Date purchaseDate = Utils.sqlDateToDate(resultSet.getDate("dataAcquisto"));
                 final boolean cineCard = resultSet.getBoolean("cineCard");
                 final String clientID = resultSet.getString("CFcliente");
+                final int filmId = resultSet.getInt("codiceFilm");
+                final String typeFilm = resultSet.getString("tipo");
                 // After retrieving all the data we create a Ticket object
-                final Ticket ticket = new Ticket(dateShow, startTime, salaID, letterLine, numberSeat, purchaseDate, cineCard, clientID);
+                final Ticket ticket = new Ticket(dateShow, startTime, salaID, letterLine, numberSeat, purchaseDate, cineCard, clientID,filmId,typeFilm);
                 tickets.add(ticket);
             }
         } catch (final SQLException e) {}
@@ -111,7 +115,7 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
 
     @Override
     public boolean save(final Ticket ticket) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(dataProiezione,oraInizio,codiceSala,letteraFila,numeroPosto,dataAcquisto,cineCard,CFcliente) VALUES (?,?,?,?,?,CURRENT_DATE(),?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(dataProiezione,oraInizio,codiceSala,letteraFila,numeroPosto,dataAcquisto,cineCard,CFcliente,codiceFilm,tipo) VALUES (?,?,?,?,?,CURRENT_DATE(),?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1,Utils.dateToSqlDate(ticket.getDateShow()));
             statement.setTime(2,Utils.timeToSqlTime(ticket.getStartTime()));
@@ -120,6 +124,8 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
             statement.setInt(5,ticket.getNumberSeat());
             statement.setBoolean(6, ticket.isCineCard());
             statement.setString(7,ticket.getClientID());
+            statement.setInt(8, ticket.getFilmID());
+            statement.setString(9, ticket.getTypeFilm());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -131,13 +137,15 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
 
     @Override
     public boolean delete(final Pair<Seat,Showing> id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceSala = ? AND letteraFila = ? AND numeroPosto = ? AND dataProiezione = ? AND oraInizio = ? ";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceSala = ? AND letteraFila = ? AND numeroPosto = ? AND dataProiezione = ? AND oraInizio = ? AND codiceFilm = ? AND tipo = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id.getX().getTheater());
             statement.setString(2, id.getX().getLine());
             statement.setInt(3,id.getX().getNumber());
             statement.setDate(4,Utils.dateToSqlDate(id.getY().getData()));
             statement.setTime(5,Utils.timeToSqlTime(id.getY().getStartTime()));
+            statement.setInt(6, id.getY().getFilmID());
+            statement.setString(7, id.getY().getProgrammingMode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -151,7 +159,7 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
                 "dataAcquisto = ?," +
                 "cineCard = ?," +
                 "CFcliente = ? "+
-            "WHERE codiceSala = ? AND letteraFila = ? AND numeroPosto = ? AND dataProiezione = ? AND oraInizio = ? ";
+            "WHERE codiceSala = ? AND letteraFila = ? AND numeroPosto = ? AND dataProiezione = ? AND oraInizio = ? AND codiceFilm = ? AND tipo = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1,Utils.dateToSqlDate(ticket.getPurchaseDate()));
             statement.setBoolean(2, ticket.isCineCard());
@@ -161,6 +169,8 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
             statement.setInt(6,ticket.getNumberSeat());
             statement.setDate(7,Utils.dateToSqlDate(ticket.getDateShow()));
             statement.setTime(8,Utils.timeToSqlTime(ticket.getStartTime()));
+            statement.setInt(9, ticket.getFilmID());
+            statement.setString(10, ticket.getTypeFilm());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);

@@ -15,9 +15,11 @@ public class Ticket {
     private final Date purchaseDate;
     private final boolean cineCard;
     private final String clientID;
+    private final int filmID;
+    private final String typeFilm;
     
     public Ticket(Date dateShow, String startTime, int salaID, String letterLine, int numberSeat, Date purchaseDate,
-            boolean cineCard, String clientID) {
+            boolean cineCard, String clientID, int filmID, String typeFilm) {
         this.dateShow = dateShow;
         this.startTime = startTime;
         this.salaID = salaID;
@@ -26,11 +28,8 @@ public class Ticket {
         this.purchaseDate = purchaseDate;
         this.cineCard = cineCard;
         this.clientID = clientID;
-    }
-
-    public Ticket(Date dateShow, String startTime, int salaID, String letterLine, int numeberSeat, boolean cineCard,
-            String clientID) {
-        this(dateShow, startTime, salaID, letterLine, numeberSeat, Utils.localDateToDate(LocalDate.now()), cineCard, clientID);
+        this.filmID = filmID;
+        this.typeFilm = typeFilm;
     }
 
     public Date getDateShow() {
@@ -65,6 +64,14 @@ public class Ticket {
         return clientID;
     }
 
+    public int getFilmID() {
+        return filmID;
+    }
+
+    public String getTypeFilm() {
+        return typeFilm;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -77,6 +84,8 @@ public class Ticket {
         result = prime * result + ((purchaseDate == null) ? 0 : purchaseDate.hashCode());
         result = prime * result + (cineCard ? 1231 : 1237);
         result = prime * result + ((clientID == null) ? 0 : clientID.hashCode());
+        result = prime * result + filmID;
+        result = prime * result + ((typeFilm == null) ? 0 : typeFilm.hashCode());
         return result;
     }
 
@@ -120,14 +129,21 @@ public class Ticket {
                 return false;
         } else if (!clientID.equals(other.clientID))
             return false;
+        if (filmID != other.filmID)
+            return false;
+        if (typeFilm == null) {
+            if (other.typeFilm != null)
+                return false;
+        } else if (!typeFilm.equals(other.typeFilm))
+            return false;
         return true;
     }
 
     @Override
     public String toString() {
         return "Ticket [dateShow=" + dateShow + ", startTime=" + startTime + ", salaID=" + salaID + ", letterLine="
-                + letterLine + ", numeberSeat=" + numberSeat + ", purchaseDate=" + purchaseDate + ", cineCard="
-                + cineCard + ", clientID=" + clientID + "]";
+                + letterLine + ", numberSeat=" + numberSeat + ", purchaseDate=" + purchaseDate + ", cineCard="
+                + cineCard + ", clientID=" + clientID + ", filmID=" + filmID + ", typeFilm=" + typeFilm + "]";
     }
-
+    
 }
