@@ -15,23 +15,23 @@
     <header>
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="523.0" prefWidth="568.0">
          <children>
-            <TextField fx:id="titolo" layoutX="13.0" layoutY="14.0" onDragExited="#setGenre" prefHeight="26.0" prefWidth="206.0" promptText="titolo" />
-            <TextField fx:id="durata" layoutX="13.0" layoutY="102.0" prefHeight="26.0" prefWidth="94.0" promptText="durata (min)" />
-            <TextField fx:id="anno" layoutX="119.0" layoutY="102.0" prefHeight="26.0" prefWidth="98.0" promptText="anno di Uscita" />
-            <TextArea fx:id="trama" layoutX="13.0" layoutY="192.0" prefHeight="84.0" prefWidth="351.0" promptText="trama" />
+            <TextField fx:id="titolo" layoutX="13.0" layoutY="14.0" onDragExited="#setGenre" prefHeight="26.0" prefWidth="206.0" promptText="titolo *" />
+            <TextField fx:id="durata" layoutX="13.0" layoutY="102.0" prefHeight="26.0" prefWidth="94.0" promptText="durata (min) *" />
+            <TextField fx:id="anno" layoutX="119.0" layoutY="102.0" prefHeight="26.0" prefWidth="98.0" promptText="anno di Uscita *" />
+            <TextArea fx:id="trama" layoutX="13.0" layoutY="192.0" prefHeight="84.0" prefWidth="351.0" promptText="trama *" />
             <Button fx:id="insertFilm" layoutX="237.0" layoutY="413.0" mnemonicParsing="false" onAction="#insertFilm" prefHeight="24.0" prefWidth="126.0" text="Inserisci Film">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <ComboBox fx:id="regista" layoutX="13.0" layoutY="73.0" prefHeight="26.0" prefWidth="205.0" promptText="regista" />
-            <DatePicker fx:id="inizioPerido" layoutX="13.0" layoutY="132.0" prefHeight="26.0" prefWidth="205.0" promptText="inizioPeriodo" />
-            <DatePicker fx:id="finePeriodo" layoutX="13.0" layoutY="163.0" prefHeight="26.0" prefWidth="206.0" promptText="finePeriodo" />
+            <ComboBox fx:id="regista" layoutX="13.0" layoutY="73.0" prefHeight="26.0" prefWidth="205.0" promptText="regista *" />
+            <DatePicker fx:id="inizioPerido" layoutX="13.0" layoutY="132.0" prefHeight="26.0" prefWidth="205.0" promptText="inizioPeriodo *" />
+            <DatePicker fx:id="finePeriodo" layoutX="13.0" layoutY="163.0" prefHeight="26.0" prefWidth="206.0" promptText="finePeriodo *" />
             <CheckComboBox fx:id="genere" layoutX="70.0" layoutY="44.0" prefHeight="26.0" prefWidth="149.0" />
-            <CheckComboBox fx:id="attori" layoutX="59.0" layoutY="279.0" prefHeight="26.0" prefWidth="158.0" />
-            <Text layoutX="13.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Genere :" />
-            <Text layoutX="13.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attori :" wrappingWidth="35.87109375" />
-            <Text layoutX="13.0" layoutY="334.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modalità Programmazione : " />
+            <CheckComboBox fx:id="attori" layoutX="61.0" layoutY="279.0" prefHeight="26.0" prefWidth="156.0" />
+            <Text layoutX="13.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Genere : *" />
+            <Text layoutX="13.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attori : *" wrappingWidth="46" />
+            <Text layoutX="13.0" layoutY="334.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modalità Programmazione : *" />
             <CheckComboBox fx:id="modProg" layoutX="170.0" layoutY="317.0" />
          </children></AnchorPane>
     </header>
