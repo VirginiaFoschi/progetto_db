@@ -289,7 +289,7 @@ public class ShopController implements Initializable {
         posto.setCellValueFactory(new PropertyValueFactory<>("numberSeat"));
         dataAcquisto.setCellValueFactory((new PropertyValueFactory<>("purchaseDate")));
         cinecard_column.setCellValueFactory(new PropertyValueFactory<>("cineCard"));
-        prezzo.setCellValueFactory(x->new SimpleObjectProperty<String>(x.getValue().isCineCard() ? String.valueOf(Controller.getAgeRangeTable().getPriceFromEta(x.getValue().getClientID(),x.getValue().getTypeFilm())).concat("0 €") : ""));
+        prezzo.setCellValueFactory(x->new SimpleObjectProperty<String>(!x.getValue().isCineCard() ? String.valueOf(Controller.getAgeRangeTable().getPriceFromEta(x.getValue().getClientID(),x.getValue().getTypeFilm())).concat("0 €") : ""));
 
         table1.setItems(FXCollections.observableArrayList(Controller.getTicketTable().findAll()));
 
