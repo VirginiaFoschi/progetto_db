@@ -189,7 +189,7 @@ public class ShowingController implements Initializable {
         Date data = date3.getSelectionModel().getSelectedItem();
         String ora = time.getSelectionModel().getSelectedItem();
         if(!id.isEmpty() && data != null && ora != null) {
-            table2.setItems(FXCollections.observableArrayList(Controller.getSeatTable().showFreeSeats(data, ora)));
+            table2.setItems(FXCollections.observableArrayList(Controller.getSeatTable().showFreeSeats(data, ora,Integer.parseInt(id))));
         } else {
             Controller.allert();
         }

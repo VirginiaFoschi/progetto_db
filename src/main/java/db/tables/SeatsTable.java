@@ -155,22 +155,24 @@ public final class SeatsTable implements Table<Seat, Pair<Integer,Line>> {
     }
 
 
-    public List<Seat> showFreeSeats(final Date data, final String ora) {
+    public List<Seat> showFreeSeats(final Date data, final String ora, final int filmID) {
         final String query = "SELECT P.* " +
                             "FROM " + TABLE_NAME + " P, " + Controller.getLineTable().getTableName() + " F, " + Controller.getTheatreTable().getTableName() + " S " +
                             "WHERE P.codiceSala = F.codiceSala  AND F.codiceSala = S.codiceSala AND F.lettera = P.lettera " +
                             "AND S.codiceSala = ( SELECT PP.codiceSala " +
                                                 "FROM " + Controller.getShowingTable().getTableName() + " PP " +
-                                                "WHERE PP.data = ? AND PP.oraInizio  = ? ) " + 
+                                                "WHERE PP.data = ? AND PP.oraInizio  = ? AND PP.codiceFilm = ? ) " + 
                             "AND (P.codiceSala,P.lettera,P.numero) NOT IN ( SELECT P1.codiceSala, P1.lettera, P1.numero " +
                                                                         "FROM " + Controller.getTicketTable().getTableName() + " B, " + TABLE_NAME + " P1 " +
                                                                         "WHERE B.numeroPosto = P1.numero AND B.letteraFila = P1.lettera AND B.codiceSala = P1.codiceSala " +
-                                                                        "AND B.dataProiezione = ? AND B.oraInizio = ? ) ";
+                                                                        "AND B.dataProiezione = ? AND B.oraInizio = ? AND B.codiceFilm = ? ) ";
             try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
                 statement.setDate(1,Utils.dateToSqlDate(data));
                 statement.setTime(2,Utils.timeToSqlTime(ora));
-                statement.setDate(3,Utils.dateToSqlDate(data));
-                statement.setTime(4,Utils.timeToSqlTime(ora));
+                statement.setInt(3,filmID);
+                statement.setDate(4,Utils.dateToSqlDate(data));
+                statement.setTime(5,Utils.timeToSqlTime(ora));
+                statement.setInt(6,filmID);
                 final ResultSet resultSet = statement.executeQuery();
                 return readSeatsFromResultSet(resultSet);
             } catch (final SQLException e) {

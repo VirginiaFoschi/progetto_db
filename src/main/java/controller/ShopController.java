@@ -233,7 +233,7 @@ public class ShopController implements Initializable {
         Date dataShow = date.getSelectionModel().getSelectedItem();
         String timeShow = time.getSelectionModel().getSelectedItem();
         if(!film.isEmpty() && dataShow!=null && timeShow != null) {
-            List<Seat> seatAvailable = Controller.getSeatTable().showFreeSeats(dataShow, timeShow);
+            List<Seat> seatAvailable = Controller.getSeatTable().showFreeSeats(dataShow, timeShow, Integer.parseInt(film));
             if(seatAvailable.isEmpty()) {
                 Controller.allertNotExist("mi spiace non sono più disponibili posti per questa proiezione");
             } else {
