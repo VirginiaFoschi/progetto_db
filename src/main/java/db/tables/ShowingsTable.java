@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import app.Controller;
 import db.Table;
+import model.Film;
 import model.FilmDetail;
 import model.Showing;
 import utils.Pair;
@@ -174,6 +175,23 @@ public final class ShowingsTable implements Table<Showing, Triplets<Date,String,
         }
     }
 
+    public List<Date> getFilmDates (final int filmID) {
+        final String query = "SELECT DISTINCT data FROM " + TABLE_NAME + " WHERE codiceFilm = ? ";
+        List<Date> dates = new ArrayList<>();
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1,filmID);
+            final ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                // To get the values of the columns of the row currently pointed we use the get methods 
+                final Date data = Utils.sqlDateToDate(resultSet.getDate("data"));
+                dates.add(data);
+            }
+            return dates;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public List<Showing> getFilmShowsOnDate (final int filmID, final Date dateShow) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ? AND data = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
@@ -236,13 +254,13 @@ public final class ShowingsTable implements Table<Showing, Triplets<Date,String,
         }
     }
 
-    public boolean isTheaterEmpty(Integer codiceSala, LocalDate data, String ora, int duration) {
+    public boolean isTheaterEmpty2(Integer codiceSala, LocalDate data, String ora, int duration) {
         //if(viewOrariFilm(Utils.localDateToDate(data), duration)){
             final String query = "SELECT * FROM " + TABLE_NAME + " P, " + Controller.getFilmsTable().getTableName() + " F " +
                                 "WHERE P.codiceFilm = F.codiceFilm " + 
                                 "AND P.codiceSala = ? AND P.data = ? " +
-                                "AND ((oraInizio <= ? AND DATE_ADD(P.oraInizio , INTERVAL F.durata MINUTE) >= ?) " +
-                                "OR (oraInizio <= DATE_ADD(? , INTERVAL ? MINUTE) AND DATE_ADD(P.oraInizio , INTERVAL F.durata MINUTE) >= DATE_ADD(? , INTERVAL ? MINUTE))) ";
+                                "AND ((oraInizio <= ? AND ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60)) >= ?) " +
+                                "OR (oraInizio <= ADDTIME(? , SEC_TO_TIME(? *60)) AND ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60)) >= ADDTIME(? , SEC_TO_TIME(? *60)))) ";
             try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
                 statement.setInt(1,codiceSala);
                 statement.setDate(2,Utils.localDateToSQLDate(data));
@@ -253,17 +271,79 @@ public final class ShowingsTable implements Table<Showing, Triplets<Date,String,
                 statement.setTime(7,Utils.timeToSqlTime(ora));
                 statement.setInt(8,duration);
                 final ResultSet resultSet = statement.executeQuery();
+                boolean b = resultSet.next();
+                System.out.println(b);
+                return b;//!resultSet.next();
+            } catch (final SQLException e) {
+                throw new IllegalStateException(e);
+            }
+    }
+
+    public boolean isTheaterEmpty3(Integer codiceSala, LocalDate data, String ora, int duration) {
+        //if(viewOrariFilm(Utils.localDateToDate(data), duration)){
+            final String query = "SELECT * FROM " + TABLE_NAME + " P, " + Controller.getFilmsTable().getTableName() + " F " +
+                                "WHERE P.codiceFilm = F.codiceFilm " + 
+                                "AND P.codiceSala = ? AND P.data = ? " +
+                                "AND (((oraInizio BETWEEN ? AND ADDTIME(? , SEC_TO_TIME(? *60))) OR (ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60)) BETWEEN  ? AND ADDTIME(? , SEC_TO_TIME(? *60)))) " +
+                                "OR (oraInizio >= ? AND ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60)) <= ADDTIME(? , SEC_TO_TIME(? *60))) " +
+                                "OR (ADDTIME(? , SEC_TO_TIME(? *60)) <= ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60)) AND ADDTIME(? , SEC_TO_TIME(? *60)) >= oraInizio ))";
+            try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+                statement.setInt(1,codiceSala);
+                statement.setDate(2,Utils.localDateToSQLDate(data));
+                statement.setTime(3,Utils.timeToSqlTime(ora));
+                statement.setTime(4,Utils.timeToSqlTime(ora));
+                statement.setInt(5,duration);
+                statement.setTime(6,Utils.timeToSqlTime(ora));
+                statement.setTime(7,Utils.timeToSqlTime(ora));
+                statement.setInt(8,duration);
+                statement.setTime(9,Utils.timeToSqlTime(ora));
+                statement.setTime(10,Utils.timeToSqlTime(ora));
+                statement.setInt(11,duration);
+                statement.setTime(12,Utils.timeToSqlTime(ora));
+                statement.setInt(13,duration);
+                statement.setTime(14,Utils.timeToSqlTime(ora));
+                statement.setInt(15,duration);
+                final ResultSet resultSet = statement.executeQuery();
+                boolean b = resultSet.next();
+                System.out.println(b);
+                return !b;//!resultSet.next();
+            } catch (final SQLException e) {
+                throw new IllegalStateException(e);
+            }
+    }
+
+    public boolean isTheaterEmpty4(Integer codiceSala, LocalDate data, String ora, int duration) {
+        //if(viewOrariFilm(Utils.localDateToDate(data), duration)){
+            final String query = "SELECT * FROM " + TABLE_NAME + " P, " + Controller.getFilmsTable().getTableName() + " F " +
+                                "WHERE P.codiceFilm = F.codiceFilm " + 
+                                "AND P.codiceSala = ? AND P.data = ? " +
+                                "AND ((ADDTIME(? , SEC_TO_TIME(? *60)) <= ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60)) AND ADDTIME(? , SEC_TO_TIME(? *60)) >= oraInizio ) " +
+                                "OR ( ? >= oraInizio AND ? <= ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60))) " +
+                                "OR ( ? <= oraInizio AND ADDTIME(? , SEC_TO_TIME(? *60)) >= ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60))))";
+            try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+                statement.setInt(1,codiceSala);
+                statement.setDate(2,Utils.localDateToSQLDate(data));
+                statement.setTime(3,Utils.timeToSqlTime(ora));
+                statement.setInt(4,duration);
+                statement.setTime(5,Utils.timeToSqlTime(ora));
+                statement.setInt(6,duration);
+                statement.setTime(7,Utils.timeToSqlTime(ora));
+                statement.setTime(8,Utils.timeToSqlTime(ora));
+                statement.setTime(9,Utils.timeToSqlTime(ora));
+                statement.setTime(10,Utils.timeToSqlTime(ora));
+                statement.setInt(11,duration);
+                final ResultSet resultSet = statement.executeQuery();
                 return !resultSet.next();
             } catch (final SQLException e) {
                 throw new IllegalStateException(e);
             }
     }
 
-    public boolean areOtherShowings(int film, LocalDate data, String ora) {
+    public boolean areOtherShowings2(int film, LocalDate data, String ora) {
         final String query = "SELECT * FROM " + TABLE_NAME + " P, " + Controller.getFilmsTable().getTableName() + " F " +
                                 "WHERE P.codiceFilm = F.codiceFilm " + 
                                 "AND P.codiceFilm = ? " +
-                                "AND P.data = ? AND DATE_ADD(P.oraInizio , INTERVAL F.durata MINUTE) >= ? ";
+                                "AND P.data = ? AND ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata *60)) >= ? ";
                                 /*da modificare se si vuole fare in modo di poter proiettare due versioni diverse dello stesso film contemporaneamente */
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
                 statement.setInt(1,film);
@@ -274,6 +354,39 @@ public final class ShowingsTable implements Table<Showing, Triplets<Date,String,
             } catch (final SQLException e) {
                 throw new IllegalStateException(e);
             }
+    }
+
+    private List<Showing> getActual(LocalDate data, String ora, int duration) {
+        final String query = "SELECT P.* FROM " + TABLE_NAME + " P, " + Controller.getFilmsTable().getTableName() + " F " +
+                                "WHERE P.codiceFilm = F.codiceFilm " + 
+                                "AND P.data = ? " +
+                                "AND ((ADDTIME(? , SEC_TO_TIME(? *60)) <= ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60)) AND ADDTIME(? , SEC_TO_TIME(? *60)) >= oraInizio ) " +
+                                "OR ( ? >= oraInizio AND ? <= ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60))) " +
+                                "OR ( ? <= oraInizio AND ADDTIME(? , SEC_TO_TIME(? *60)) >= ADDTIME(P.oraInizio , SEC_TO_TIME(F.durata*60))))";
+            try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+                statement.setDate(1,Utils.localDateToSQLDate(data));
+                statement.setTime(2,Utils.timeToSqlTime(ora));
+                statement.setInt(3,duration);
+                statement.setTime(4,Utils.timeToSqlTime(ora));
+                statement.setInt(5,duration);
+                statement.setTime(6,Utils.timeToSqlTime(ora));
+                statement.setTime(7,Utils.timeToSqlTime(ora));
+                statement.setTime(8,Utils.timeToSqlTime(ora));
+                statement.setTime(9,Utils.timeToSqlTime(ora));
+                statement.setInt(10,duration);
+                final ResultSet resultSet = statement.executeQuery();
+                return readShowingsFromResultSet(resultSet);
+            } catch (final SQLException e) {
+                throw new IllegalStateException(e);
+            }
+    }
+
+    public boolean areOtherShowings(Film film, LocalDate data, String ora) {
+        return getActual(data, ora, film.getDuration()).stream().filter(x->x.getFilmID()==film.getId()).findFirst().isPresent();
+    }
+
+    public boolean isTheaterEmpty(Integer codiceSala, LocalDate data, String ora, int duration) {
+        return getActual(data, ora, duration).stream().filter(x->x.getTheaterID()==codiceSala).findFirst().isEmpty();
     }
 
 }

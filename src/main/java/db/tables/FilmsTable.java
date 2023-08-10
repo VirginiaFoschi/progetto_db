@@ -205,7 +205,7 @@ public final class FilmsTable implements Table<Film, Integer> {
     }
 
     public List<Film> getFilmsOnDate(final Date date) {
-        final String query = "SELECT F.* "+
+        final String query = "SELECT DISTINCT F.* "+
                             "FROM " + TABLE_NAME + " F, " + Controller.getShowingTable().getTableName() + " S " +
                             "WHERE F.codiceFilm = S.codiceFilm AND data = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

@@ -7,8 +7,4 @@ public class Actor extends Cast {
         //TODO Auto-generated constructor stub
     }
 
-    public Actor(String nome, String cognome, String nazionalita) {
-        super(nome,cognome,nazionalita,false);
-    }
-
 }

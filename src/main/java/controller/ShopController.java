@@ -22,8 +22,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import model.CineCard;
+import model.FilmDetail;
 import model.Seat;
+import model.Showing;
 import model.Ticket;
+import utils.Triplets;
 
 public class ShopController implements Initializable {
 
@@ -123,6 +126,14 @@ public class ShopController implements Initializable {
     @FXML
     private ComboBox<Integer> entrances;
 
+    /*private void clear() {
+        cf.clear();
+        cf2.clear();
+        cf3.clear();
+        cf4.clear();
+        filmID.clear();
+    }*/
+
     @FXML
     void buyTicket(ActionEvent event) {
         String filmid = filmID.getText();
@@ -136,12 +147,17 @@ public class ShopController implements Initializable {
             Ticket ticket = new Ticket(dataShow, timeShow, posto.getTheater(), posto.getLine(), posto.getNumber(), new Date(), cineCard, client, Integer.parseInt(filmid), modprog);
             Controller.getTicketTable().save(ticket);
             table1.setItems(FXCollections.observableArrayList(Controller.getTicketTable().findAll()));
+            Optional<Showing> show = Controller.getShowingTable().findByPrimaryKey(new Triplets<Date,String,FilmDetail>(dataShow, timeShow, new FilmDetail(modprog, Integer.parseInt(filmid))));
+            if(show.isPresent()) {
+                Controller.getShowingTable().update(new Showing(dataShow, timeShow, show.get().getNumberSpectator() +1, show.get().getTheaterID(), Integer.parseInt(filmid), modprog));
+            }
             if(cineCard) {
                 Optional<CineCard> card = Controller.getCinecardTable().getNewer(client);
                 if(card.isPresent()) {
                     Controller.getCinecardTable().update(new CineCard(client, card.get().getDataAcquisto(), card.get().getIngressiDisponibili()-1, card.get().getIngressiTotali()));
                 }
             }
+            //clear();
         } else {
             Controller.allert();
         }
@@ -163,6 +179,7 @@ public class ShopController implements Initializable {
             } else {
                 Controller.allertNotExist("non esiste un cliente con quel codice fiscale");
             }
+            //clear();
         } else {
             Controller.allert();
         }
@@ -177,6 +194,7 @@ public class ShopController implements Initializable {
             } else {
                 Controller.allertNotExist("non esiste un cliente con quel codice fiscale");
             }
+            //clear();
         } else {
             Controller.allertNotExist("inserisci prima il codice fiscale del cliente");
         }
@@ -192,6 +210,7 @@ public class ShopController implements Initializable {
         String client = cf2.getText();
         if(!client.isEmpty()) {
             table1.setItems(FXCollections.observableArrayList(Controller.getTicketTable().getClientTickets(client)));
+            //clear();
         } else {
             Controller.allert();
         }
@@ -203,7 +222,7 @@ public class ShopController implements Initializable {
         if(!film.isEmpty()) {
             int id = Integer.parseInt(film);
             if(Controller.getFilmsTable().findByPrimaryKey(id).isPresent()) {
-                date.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmShows(id).stream().map(x->x.getData()).collect(Collectors.toList())));
+                date.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmDates(id)));
             } else {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
@@ -240,7 +259,7 @@ public class ShopController implements Initializable {
                 seat.setItems(FXCollections.observableArrayList(seatAvailable));
             }
         } else {
-            Controller.allert();
+            Controller.allertNotExist("Inserisci prima data e ora della proiezione");
         }
     }
 
@@ -289,7 +308,7 @@ public class ShopController implements Initializable {
         posto.setCellValueFactory(new PropertyValueFactory<>("numberSeat"));
         dataAcquisto.setCellValueFactory((new PropertyValueFactory<>("purchaseDate")));
         cinecard_column.setCellValueFactory(new PropertyValueFactory<>("cineCard"));
-        prezzo.setCellValueFactory(x->new SimpleObjectProperty<String>(!x.getValue().isCineCard() ? String.valueOf(Controller.getAgeRangeTable().getPriceFromEta(x.getValue().getClientID(),x.getValue().getTypeFilm())).concat("0 €") : ""));
+        prezzo.setCellValueFactory(x->new SimpleObjectProperty<String>(!x.getValue().isCineCard() ? String.valueOf(Controller.getAgeRangeTable().getPriceFromEta(x.getValue().getClientID(),x.getValue().getTypeFilm(), x.getValue().getPurchaseDate())).concat("0 €") : ""));
 
         table1.setItems(FXCollections.observableArrayList(Controller.getTicketTable().findAll()));
 

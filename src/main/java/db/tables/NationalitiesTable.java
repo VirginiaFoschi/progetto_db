@@ -12,16 +12,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 import db.Table;
-import model.Cast;
-import model.Director;
+import model.Nationality;
 
-public final class DirectorsTable implements Table<Cast, Integer> {    
+public final class NationalitiesTable implements Table<Nationality, String> {    
     
-    public static final String TABLE_NAME = "REGISTA";
+    public static final String TABLE_NAME = "NAZIONALITA";
 
     private final Connection connection; 
 
-    public DirectorsTable(final Connection connection) {
+    public NationalitiesTable(final Connection connection) {
         this.connection = Objects.requireNonNull(connection);
     }
 
@@ -44,66 +43,60 @@ public final class DirectorsTable implements Table<Cast, Integer> {
     }
 
     @Override
-    public Optional<Cast> findByPrimaryKey(final Integer id) {
+    public Optional<Nationality> findByPrimaryKey(final String name) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceRegista = ? ";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE nomeNazionalità = ?";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
-            statement.setInt(1, id);
+            statement.setString(1, name);
             // 4. Execute the query, this operations returns a ResultSet
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
-            //    here we extract the first (and only) film from the ResultSet
-            return readDirectorsFromResultSet(resultSet).stream().findFirst();
+            //    here we extract the first (and only) Nationality from the ResultSet
+            return readNationalitiesFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     /**
-     * Given a ResultSet read all the films in it and collects them in a List
-     * @param resultSet a ResultSet from which the film(s) will be extracted
-     * @return a List of all the films in the ResultSet
+     * Given a ResultSet read all the Nationalitys in it and collects them in a List
+     * @param resultSet a ResultSet from which the Nationality(s) will be extracted
+     * @return a List of all the Nationalitys in the ResultSet
      */
-    private List<Cast> readDirectorsFromResultSet(final ResultSet resultSet) {
-        final List<Cast> directors = new ArrayList<>();
+    private List<Nationality> readNationalitiesFromResultSet(final ResultSet resultSet) {
+        final List<Nationality> nationalities = new ArrayList<>();
         try {
             // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
             // before the first row. With next the pointer advances to the following row and returns 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("codiceRegista");
-                final String nome = resultSet.getString("nome");
-                final String cognome = resultSet.getString("cognome");
-                final String nazionalita = resultSet.getString("nazionalità");
-                // After retrieving all the data we create a film object
-                final Cast director = new Director(id,nome,cognome,nazionalita);
-                directors.add(director);
+                final String name = resultSet.getString("nomeNazionalità");
+                // After retrieving all the data we create a Nationality object
+                final Nationality nationality = new Nationality(name);
+                nationalities.add(nationality);
             }
         } catch (final SQLException e) {}
-        return directors;
+        return nationalities;
     }
 
     @Override
-    public List<Cast> findAll() {
+    public List<Nationality> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
-            return readDirectorsFromResultSet(resultSet);
+            return readNationalitiesFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public boolean save(final Cast cast) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(codiceRegista,nome,cognome,nazionalità) VALUES (?,?,?,?)";
+    public boolean save(final Nationality Nationality) {
+        final String query = "INSERT INTO " + TABLE_NAME + "(nomeNazionalità) VALUES (?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, cast.getId());
-            statement.setString(2, cast.getNome());
-            statement.setString(3, cast.getCognome());
-            statement.setString(4, cast.getNazionalita());
+            statement.setString(1, Nationality.getName());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -114,10 +107,10 @@ public final class DirectorsTable implements Table<Cast, Integer> {
     }
 
     @Override
-    public boolean delete(final Integer id) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceRegista = ? ";
+    public boolean delete(final String name) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE nomeNazionalità = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, id);
+            statement.setString(1, name);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -125,34 +118,16 @@ public final class DirectorsTable implements Table<Cast, Integer> {
     }
 
     @Override
-    public boolean update(final Cast cast) {
+    public boolean update(final Nationality Nationality) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "nome = ?," + 
-                "cognome = ?," +
-                "nazionalita = ?" +
-            "WHERE codiceRegista = ? ";
+                "nomeNazionalità = ?" +
+            "WHERE nomeNazionalità = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1,cast.getNome());
-            statement.setString(2,cast.getCognome());
-            statement.setString(3,cast.getNazionalita());
-            statement.setInt(4,cast.getId());
+            statement.setString(1,Nationality.getName());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public Integer getLastID() {
-        try (final Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT MAX(codiceRegista) AS last FROM " + TABLE_NAME );
-            if(resultSet.next()) {
-                return resultSet.getInt("last");
-            } else {
-                return 0;
-            }
-        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }

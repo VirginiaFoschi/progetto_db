@@ -127,6 +127,16 @@ public final class ParticipationsTable implements Table<Participation, Pair<Film
         }
     }
 
+    public boolean deleteFilm(final Film id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceFilm = ? ";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, id.getId());
+            return statement.executeUpdate() > 0;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     @Override
     public boolean update(final Participation participation) {
         final String query =
@@ -166,32 +176,15 @@ public final class ParticipationsTable implements Table<Participation, Pair<Film
         }
     }
 
-    public List<Integer> getActorFromFilm(final Integer filmID) {
-        List<Integer> actors = new ArrayList<>();
-        final String query = "SELECT codiceAttore FROM " + TABLE_NAME + " WHERE codiceFilm = ? ";
-        // 2. Prepare a statement inside a try-with-resources
-        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            // 3. Fill in the "?" with actual data
-            statement.setInt(1,filmID);
-            // 4. Execute the query, this operations returns a ResultSet
-            final ResultSet resultSet = statement.executeQuery();
-            // 5. Do something with the result of the query execution; 
-            //    here we extract the first (and only) film from the ResultSet
-            while (resultSet.next()) {
-                actors.add(resultSet.getInt("codiceAttore"));
-            }
-            return actors;
-        } catch (final SQLException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     public List<Cast> getActorInOrder() {
         List<Cast> actors = new ArrayList<>();
         final String query = "SELECT A.* " +
-                            "FROM " + TABLE_NAME + " P , " + Controller.getActorTable().getTableName() + " A " +
+                            "FROM " + Controller.getActorTable().getTableName() + " A LEFT JOIN " + TABLE_NAME + " P "+
+                            "ON P.codiceAttore = A.codiceAttore " +
+                            "GROUP BY A.codiceAttore, nome, cognome, nazionalità ORDER BY COUNT(codiceFilm) DESC ";
+                            /*"FROM " + TABLE_NAME + " P , " + Controller.getActorTable().getTableName() + " A " +
                             "WHERE P.codiceAttore = A.codiceAttore " +
-                            "GROUP BY A.codiceAttore, nome, cognome, nazionalità ORDER BY COUNT(*) DESC ";
+                            "GROUP BY A.codiceAttore, nome, cognome, nazionalità ORDER BY COUNT(codiceFilm) DESC "; */
         // 2. Prepare a statement inside a try-with-resources
          try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             final ResultSet resultSet = statement.executeQuery();

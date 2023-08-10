@@ -147,4 +147,21 @@ public final class TheatersTable implements Table<Theater, Integer> {
         }
     }
 
+    public boolean salaIs3D(Integer codiceSala) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceSala = ? AND 3D = true ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setInt(1, codiceSala);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return resultSet.next();
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }

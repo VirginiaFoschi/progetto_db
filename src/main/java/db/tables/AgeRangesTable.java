@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -159,14 +160,14 @@ public final class AgeRangesTable implements Table<AgeRange, Integer> {
         }
     }
 
-    public Double getPriceFromEta(final String cliente, final String type) {
+    public Double getPriceFromEta(final String cliente, final String type, final Date data) {
         // 1. Define the query with the "?" placeholder(s)
         final String query = "SELECT T.prezzo "+
                             "FROM " + TABLE_NAME + " E, " + Controller.getCategoryTable().getTableName() + " C, " + Controller.getRateTable().getTableName() + " T " +
                             "WHERE E.nomeCategoria = C.nomeCategoria AND C.nomeCategoria = T.nomeCategoria " +
                             "AND E.etaMin <= ? AND etaMax >= ? " +
                             "AND T.tipo = ? ";
-        final int eta = Controller.getClientTable().getYears(cliente);
+        final int eta = Controller.getClientTable().getYears(cliente,data);
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data

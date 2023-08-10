@@ -16,10 +16,6 @@ public class Cast {
         this.regista = regista;
     }
 
-    public Cast(String nome, String cognome, String nazionalita, Boolean regista) {
-        this(0,nome,cognome,nazionalita,regista);
-    }
-
     public Boolean isRegista() {
         return regista;
     }

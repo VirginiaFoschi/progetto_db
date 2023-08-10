@@ -30,7 +30,7 @@
             <CheckComboBox fx:id="genere" layoutX="70.0" layoutY="44.0" prefHeight="26.0" prefWidth="149.0" />
             <CheckComboBox fx:id="attori" layoutX="61.0" layoutY="279.0" prefHeight="26.0" prefWidth="156.0" />
             <Text layoutX="13.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Genere : *" />
-            <Text layoutX="13.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attori : *" wrappingWidth="46" />
+            <Text layoutX="13.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attori : " wrappingWidth="46" />
             <Text layoutX="13.0" layoutY="334.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modalità Programmazione : *" />
             <CheckComboBox fx:id="modProg" layoutX="170.0" layoutY="317.0" />
          </children></AnchorPane>

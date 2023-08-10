@@ -15,6 +15,7 @@ import db.tables.FilmDetailsTable;
 import db.tables.FilmsTable;
 import db.tables.GenresTable;
 import db.tables.LinesTable;
+import db.tables.NationalitiesTable;
 import db.tables.ParticipationsTable;
 import db.tables.PeriodsTable;
 import db.tables.ProgrammingModesTable;
@@ -25,16 +26,12 @@ import db.tables.TheatersTable;
 import db.tables.TicketsTable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import model.Line;
-import model.Seat;
-import model.Theater;
 
 public class Controller {
 
     final static String username = "root";
     final static String password = "";
     final static String dbName = "cinema";
-    final static int NUM_SALE = 6;
     
     private static App app;
     private static ConnectionProvider connectionProvider = new ConnectionProvider(username, password, dbName);
@@ -58,9 +55,14 @@ public class Controller {
     private static FilmDetailsTable filmDetailTable = new FilmDetailsTable(connectionProvider.getMySQLConnection());
     private static ProgrammingModesTable programmingModesTable = new ProgrammingModesTable(connectionProvider.getMySQLConnection());
     private static ClientsTable clientTable = new ClientsTable(connectionProvider.getMySQLConnection());
+    private static NationalitiesTable nationalityTable = new NationalitiesTable(connectionProvider.getMySQLConnection());
 
     public Controller(final App application) {
         app = application;
+    }
+
+    public static NationalitiesTable getNationalityTable() {
+        return nationalityTable;
     }
 
     public static ClientsTable getClientTable() {

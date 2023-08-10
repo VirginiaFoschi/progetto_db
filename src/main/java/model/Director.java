@@ -7,9 +7,4 @@ public class Director extends Cast {
         //TODO Auto-generated constructor stub
     }
 
-    public Director(String nome, String cognome, String nazionalita) {
-        super(nome, cognome, nazionalita, true);
-        //TODO Auto-generated constructor stub
-    }
-
 }

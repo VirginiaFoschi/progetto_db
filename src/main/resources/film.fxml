@@ -32,9 +32,9 @@
         </TableView>
         <TextField fx:id="filmID" layoutX="13.0" layoutY="94.0" promptText="codice film *" />
         <Button fx:id="searchFilm" layoutX="13.0" layoutY="127.0" mnemonicParsing="false" onAction="#searchFilm" prefHeight="26.0" prefWidth="69.0" text="Cerca film" />
-        <Button fx:id="showFilm" layoutX="13.0" layoutY="231.0" mnemonicParsing="false" onAction="#showFilm" text="Vedi film" />
+        <Button fx:id="showFilm" layoutX="13.0" layoutY="231.0" mnemonicParsing="false" onAction="#showFilm" text="Vedi film in proiezione" />
         <TextField fx:id="actorID" layoutX="13.0" layoutY="299.0" promptText="codice attore *" />
-        <Button fx:id="showActorFilm" layoutX="13.0" layoutY="333.0" mnemonicParsing="false" onAction="#showActorFilm" text="Visualizza Film" />
+        <Button fx:id="showActorFilm" layoutX="13.0" layoutY="333.0" mnemonicParsing="false" onAction="#showActorFilm" text="Visualizza film" />
         <Button fx:id="deleteFilm" layoutX="85.0" layoutY="127.0" mnemonicParsing="false" onAction="#deleteFilm" prefHeight="26.0" prefWidth="77.0" text="Elimina film" />
         <Button fx:id="insertFilm" layoutX="13.0" layoutY="29.0" mnemonicParsing="false" onAction="#insertFilm" text="Inserisci film" />
         <Button fx:id="film2Dand3D" layoutX="13.0" layoutY="406.0" mnemonicParsing="false" onAction="#filmInAllModes" text="Film in 2D e in 3D" />

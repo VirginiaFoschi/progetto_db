@@ -12,9 +12,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import app.Controller;
 import db.Table;
 import model.Cast;
-import utils.Pair;
 import model.Actor;
 
 public final class ActorsTable implements Table<Cast, Integer> {    
@@ -100,11 +100,12 @@ public final class ActorsTable implements Table<Cast, Integer> {
 
     @Override
     public boolean save(final Cast cast) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(nome,cognome,nazionalità) VALUES (?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(codiceAttore,nome,cognome,nazionalità) VALUES (?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, cast.getNome());
-            statement.setString(2, cast.getCognome());
-            statement.setString(3, cast.getNazionalita());
+            statement.setInt(1, cast.getId());
+            statement.setString(2, cast.getNome());
+            statement.setString(3, cast.getCognome());
+            statement.setString(4, cast.getNazionalita());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -141,6 +142,37 @@ public final class ActorsTable implements Table<Cast, Integer> {
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             System.out.println(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<Cast> getActorFromFilm(final Integer filmID) {
+        final String query = "SELECT A.* "+
+                            "FROM " + TABLE_NAME + " A, " + Controller.getParticipationTable().getTableName() + " P "+
+                            "WHERE A.codiceAttore = P.codiceAttore AND codiceFilm = ? ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setInt(1,filmID);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return readActorsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Integer getLastID() {
+        try (final Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery("SELECT MAX(codiceAttore) AS last FROM " + TABLE_NAME );
+            if(resultSet.next()) {
+                return resultSet.getInt("last");
+            } else {
+                return 0;
+            }
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }

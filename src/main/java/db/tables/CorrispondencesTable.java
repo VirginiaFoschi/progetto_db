@@ -124,6 +124,16 @@ public final class CorrispondencesTable implements Table<Corrispondence, Pair<Fi
         }
     }
 
+    public boolean deleteFilm(final Film id) {
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE codiceFilm = ? ";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, id.getId());
+            return statement.executeUpdate() > 0;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     @Override
     public boolean update(final Corrispondence corrispondence) {
         final String query =

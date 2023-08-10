@@ -100,7 +100,19 @@ public class ShowingController implements Initializable {
     @FXML
     private TableColumn<Showing,String> time_column;
 
-    @FXML
+    /*private void clear() {
+        date.getEditor().clear();
+        date3.getItems().clear();
+        filmID.clear();
+        filmID2.clear();
+        filmID3.clear();
+        startTime.clear();
+        theaters.getItems().clear();
+        time.getItems().clear();
+        modProg.getItems().clear();
+    }*/
+
+    /*@FXML
     void insertShow(ActionEvent event) {
         String id = filmID.getText();
         LocalDate data = date.getValue();
@@ -110,18 +122,66 @@ public class ShowingController implements Initializable {
         if(!id.isEmpty() && data!= null && !ora.isEmpty() && codiceSala != null && programmingMode !=null) {
             int film = Integer.parseInt(id);
             if(check(film,data) && isTheaterEmpty(codiceSala,data,ora,Controller.getFilmsTable().findByPrimaryKey(film).get().getDuration()) 
-            && hasSelectedMode(programmingMode,film) && areNotOtherShowings(film,data,ora)) {
+            && hasSelectedMode(programmingMode,film) && areNotOtherShowings(film,data,ora) && salaIsCorrect(programmingMode,codiceSala)) {
                 Showing showing = new Showing(Utils.localDateToDate(data), ora,0, codiceSala,Integer.parseInt(id),programmingMode);
-                boolean b=Controller.getShowingTable().save(showing);
-                System.out.println(b);
+                Controller.getShowingTable().save(showing);
                 table1.setItems(FXCollections.observableArrayList(Controller.getShowingTable().findAll()));
             }
         } else {
             Controller.allert();
         }
+    } */
+
+    @FXML
+    void insertShow(ActionEvent event) {
+        String id = filmID.getText();
+        LocalDate data = date.getValue();
+        String ora = startTime.getText();
+        Integer codiceSala = theaters.getSelectionModel().getSelectedItem();
+        String programmingMode = modProg.getSelectionModel().getSelectedItem();
+        if(!id.isEmpty() && data!= null && !ora.isEmpty() && codiceSala != null && programmingMode !=null) {
+            Optional<Film> film =Controller.getFilmsTable().findByPrimaryKey(Integer.parseInt(id));
+            if(film.isPresent()) {
+                if(check(film.get(),data) && isTheaterEmpty(codiceSala,data,ora,film.get().getDuration()) 
+            && hasSelectedMode(programmingMode,film.get().getId()) && areNotOtherShowings(film.get(),data,ora) && salaIsCorrect(programmingMode,codiceSala)) {
+                    Showing showing = new Showing(Utils.localDateToDate(data), ora,0, codiceSala,Integer.parseInt(id),programmingMode);
+                    Controller.getShowingTable().save(showing);
+                    table1.setItems(FXCollections.observableArrayList(Controller.getShowingTable().findAll()));
+                }
+            } else {
+                Controller.allertNotExist("non esiste un film con quel codice");
+            }
+            //clear();
+        } else {
+            Controller.allert();
+        }
     }
 
+    private boolean salaIsCorrect(String programmingMode, Integer codiceSala) {
+        if(programmingMode.equals("2D")) {
+            return true;
+        } else {
+            if(Controller.getTheatreTable().salaIs3D(codiceSala)) {
+                return true;
+            } else {
+                Controller.allertNotExist("la sala selezionata non è adibita per la proiezione di film in 3D");
+                return false;
+            }
+        }
+    } 
+
+    /*
     private boolean areNotOtherShowings(int film, LocalDate data, String ora) {
+        if(Controller.getShowingTable().areOtherShowings(film,data,ora)) {
+            Controller.allertNotExist("il film scelto è già proiettato in un'altra sala");
+            return false;
+        } else {
+            return true;
+        }
+    } */
+
+    
+    private boolean areNotOtherShowings(Film film, LocalDate data, String ora) {
         if(Controller.getShowingTable().areOtherShowings(film,data,ora)) {
             Controller.allertNotExist("il film scelto è già proiettato in un'altra sala");
             return false;
@@ -148,7 +208,7 @@ public class ShowingController implements Initializable {
         }
     }
 
-    private boolean check(int filmID, LocalDate data){
+    /*private boolean check(int filmID, LocalDate data){
         Optional<Film> film =Controller.getFilmsTable().findByPrimaryKey(filmID);
         if(film.isPresent()) {
             if(Controller.getFilmsTable().checkPeriod(film.get().getId(),data)) {
@@ -159,6 +219,15 @@ public class ShowingController implements Initializable {
             }
         } else {
             Controller.allertNotExist("non esiste un film con quel codice");
+            return false;
+        }
+    } */
+
+    private boolean check(Film film, LocalDate data){
+        if(Controller.getFilmsTable().checkPeriod(film.getId(),data)) {
+            return true;
+        } else {
+            Controller.allertNotExist("la data non appartiene al periodo di proiezione del film scelto");
             return false;
         }
     }
@@ -201,7 +270,7 @@ public class ShowingController implements Initializable {
         if(!film.isEmpty()) {
             int id = Integer.parseInt(film);
             if(Controller.getFilmsTable().findByPrimaryKey(id).isPresent()) {
-                date3.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmShows(id).stream().map(x->x.getData()).collect(Collectors.toList())));
+                date3.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmDates(id)));
             } else {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }

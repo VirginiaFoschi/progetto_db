@@ -86,16 +86,26 @@ public class ClientController implements Initializable {
                 Client client = new Client(clientID,clientName, clienteSurname, Utils.localDateToDate(date), clientTel.isEmpty() ? Optional.empty() : Optional.of(clientTel), clientMail);
                 Controller.getClientTable().save(client);
                 table.setItems(FXCollections.observableArrayList(Controller.getClientTable().findAll()));
+                //clear();
             }
         } else {
             Controller.allert();
         }
     }
 
-    @FXML
+    /*private void clear() {
+        cf.clear();
+        name.clear();
+        surname.clear();
+        mail.clear();
+        tel.clear();
+        dateOfBirth.getEditor().clear();
+    }*/
+
+    /*@FXML
     void showCinecards(ActionEvent event) {
 
-    }
+    } */
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

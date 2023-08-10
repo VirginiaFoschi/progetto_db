@@ -22,7 +22,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 import model.Film;
 import model.FilmExtension;
 import utils.Utils;
@@ -86,11 +85,27 @@ public class FilmController implements Initializable {
     @FXML
     private TableColumn<FilmExtension, String> trama;
 
+    /*private void clear() {
+        actorID.clear();
+        date.getEditor().clear();
+        filmID.clear();
+    }*/
+
     @FXML
     void deleteFilm(ActionEvent event) {
         String film = filmID.getText();
         if(film.length()!=0) {
-            Controller.getFilmsTable().delete(Integer.parseInt(film));
+            Optional<Film> f = Controller.getFilmsTable().findByPrimaryKey(Integer.parseInt(film));
+            if(f.isPresent()) {
+                Controller.getCorrispondenceTable().deleteFilm(f.get());
+                Controller.getParticipationTable().deleteFilm(f.get());
+                Controller.getFilmDetailTable().deleteFilm(f.get());
+                Controller.getFilmsTable().delete(f.get().getId());
+                updateTable(Controller.getFilmsTable().findAll());
+            } else {
+                Controller.allertNotExist("non esiste un film con quel codice");
+            }
+            //clear();
         }
     }
 
@@ -112,6 +127,7 @@ public class FilmController implements Initializable {
             Optional<Film> film = Controller.getFilmsTable().findByPrimaryKey(Integer.parseInt(id));
             updateTable(film.isPresent() ? List.of(film.get()) : new ArrayList<>());
         }
+        //clear();
     }
 
     @FXML
@@ -121,6 +137,7 @@ public class FilmController implements Initializable {
             List<Film> films = Controller.getFilmsTable().fromIDtoFilm(Controller.getParticipationTable().getFilmsFromActor(Integer.parseInt(actor)));
             updateTable(films);
         }
+        //clear();
     }
 
     @FXML
@@ -132,6 +149,7 @@ public class FilmController implements Initializable {
     void showFilm(ActionEvent event) {
         LocalDate data = date.getValue();
         updateTable(Controller.getFilmsTable().getFilmsOnDate(Utils.localDateToDate(data)));
+        //clear();
     }
 
     @Override
