@@ -202,7 +202,6 @@ public class CastController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
         id.setCellValueFactory(new PropertyValueFactory<Cast, Integer>("id"));
         nome.setCellValueFactory(new PropertyValueFactory<Cast, String>("nome"));
         cognome.setCellValueFactory(new PropertyValueFactory<Cast,String>("cognome"));

@@ -44,6 +44,7 @@ public class Triplets<X,Y,Z> {
         return "Triplets [x=" + x + ", y=" + y + ", z=" + z + "]";
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

@@ -2,7 +2,6 @@ package it;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import db.ConnectionProvider;
 import db.tables.PeriodsTable;
 import model.Period;
-import model.Genre;
 import utils.Pair;
 import utils.Utils;
 

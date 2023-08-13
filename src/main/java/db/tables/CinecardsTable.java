@@ -18,7 +18,6 @@ import utils.Utils;
 
 import db.Table;
 import model.CineCard;
-import model.CinecardType;
 import model.Client;
 
 public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> {    

@@ -43,7 +43,6 @@ public class PriceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
         numberEntrances.setCellValueFactory(new PropertyValueFactory<>("entrancesNumber"));
         priceCinecard.setCellValueFactory(x-> new SimpleObjectProperty<>(String.valueOf(x.getValue().getPrice()).concat("0 \u20AC")));
         monthsValidity.setCellValueFactory(new PropertyValueFactory<>("validityMonths"));

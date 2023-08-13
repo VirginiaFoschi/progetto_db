@@ -108,7 +108,6 @@ public class InsertFilmController implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
         genere.getItems().addAll(FXCollections.observableArrayList(Controller.getGenreTable().findAll().stream().map(x->x.getType()).collect(Collectors.toList())));
         attori.getItems().addAll(FXCollections.observableArrayList(Controller.getActorTable().findAll()));
         regista.getItems().addAll(FXCollections.observableArrayList(Controller.getDirectorTable().findAll()));

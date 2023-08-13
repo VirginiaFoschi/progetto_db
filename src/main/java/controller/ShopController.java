@@ -299,7 +299,6 @@ public class ShopController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
         cf_column.setCellValueFactory(new PropertyValueFactory<>("clientID"));
         data.setCellValueFactory(new PropertyValueFactory<>("dateShow"));
         ora.setCellValueFactory(new PropertyValueFactory<>("startTime"));

@@ -169,7 +169,6 @@ public class FilmController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
         id.setCellValueFactory(new PropertyValueFactory<FilmExtension,Integer>("id"));
         titolo.setCellValueFactory(new PropertyValueFactory<FilmExtension,String>("title"));
         durata.setCellValueFactory(new PropertyValueFactory<FilmExtension,Integer>("duration"));

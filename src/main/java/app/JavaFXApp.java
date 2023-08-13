@@ -36,8 +36,7 @@ public class JavaFXApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // TODO Auto-generated method stub
-        Controller conn = new Controller(this);
+        new Controller(this);
         this.stage=primaryStage;
         view();
     }

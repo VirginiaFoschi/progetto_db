@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import db.Table;
-import javafx.util.Callback;
 import model.Seat;
 import model.Showing;
 import model.Ticket;

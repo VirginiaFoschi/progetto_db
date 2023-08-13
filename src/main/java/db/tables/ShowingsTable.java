@@ -18,7 +18,6 @@ import db.Table;
 import model.Film;
 import model.FilmDetail;
 import model.Showing;
-import utils.Pair;
 import utils.Triplets;
 import utils.Utils;
 
@@ -239,7 +238,7 @@ public final class ShowingsTable implements Table<Showing, Triplets<Date,String,
             }
     } */
 
-    private boolean viewOrariFilm(final Date data, final int codiceSala) {
+    /*private boolean viewOrariFilm(final Date data, final int codiceSala) {
         final String query = "CREATE VIEW ORARI_FILM (codiceFilm,oraInizio,oraFine) "+
                             "AS ( SELECT P.codiceFilm, P.oraInizio, DATE_ADD(P.oraInizio , INTERVAL durata MINUTE) " +
                             "FROM " + TABLE_NAME + " P , " + Controller.getFilmsTable().getTableName() + " F " +
@@ -252,7 +251,7 @@ public final class ShowingsTable implements Table<Showing, Triplets<Date,String,
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
-    }
+    }*/
 
     public boolean isTheaterEmpty2(Integer codiceSala, LocalDate data, String ora, int duration) {
         //if(viewOrariFilm(Utils.localDateToDate(data), duration)){

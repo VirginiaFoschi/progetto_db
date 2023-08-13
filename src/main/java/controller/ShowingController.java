@@ -297,7 +297,6 @@ public class ShowingController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
         film_column.setCellValueFactory(new PropertyValueFactory<>("filmID"));
         date_column.setCellValueFactory(new PropertyValueFactory<>("data"));
         time_column.setCellValueFactory(new PropertyValueFactory<>("startTime"));

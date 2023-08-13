@@ -7,13 +7,11 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import utils.Pair;
-import utils.Utils;
 
 import db.Table;
 import model.Category;

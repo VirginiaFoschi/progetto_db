@@ -1,9 +1,6 @@
 package model;
 
-import java.time.LocalDate;
 import java.util.Date;
-
-import utils.Utils;
 
 public class Ticket {
 

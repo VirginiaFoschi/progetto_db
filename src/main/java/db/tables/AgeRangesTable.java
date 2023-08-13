@@ -16,7 +16,6 @@ import app.Controller;
 import db.Table;
 import model.AgeRange;
 import model.Category;
-import model.Client;
 
 public final class AgeRangesTable implements Table<AgeRange, Integer> {    
     
