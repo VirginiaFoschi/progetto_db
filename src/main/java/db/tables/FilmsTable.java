@@ -216,4 +216,17 @@ public final class FilmsTable implements Table<Film, Integer> {
             throw new IllegalStateException(e);
         }
     }
+
+    public List<Film> getFilmsFromGenre(final String genre) {
+        final String query = "SELECT F.* "+
+                            "FROM " + TABLE_NAME + " F, " + Controller.getCorrispondenceTable().getTableName() + " C " +
+                            "WHERE F.codiceFilm = C.codiceFilm AND C.tipo = ? ";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1,genre);
+            final ResultSet resultSet = statement.executeQuery();
+            return readFilmsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

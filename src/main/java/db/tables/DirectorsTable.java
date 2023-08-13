@@ -77,7 +77,7 @@ public final class DirectorsTable implements Table<Cast, Integer> {
                 final int id = resultSet.getInt("codiceRegista");
                 final String nome = resultSet.getString("nome");
                 final String cognome = resultSet.getString("cognome");
-                final String nazionalita = resultSet.getString("nazionalità");
+                final String nazionalita = resultSet.getString("nazionalit\u00E0");
                 // After retrieving all the data we create a film object
                 final Cast director = new Director(id,nome,cognome,nazionalita);
                 directors.add(director);
@@ -98,7 +98,7 @@ public final class DirectorsTable implements Table<Cast, Integer> {
 
     @Override
     public boolean save(final Cast cast) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(codiceRegista,nome,cognome,nazionalità) VALUES (?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(codiceRegista,nome,cognome,nazionalit\u00E0) VALUES (?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, cast.getId());
             statement.setString(2, cast.getNome());

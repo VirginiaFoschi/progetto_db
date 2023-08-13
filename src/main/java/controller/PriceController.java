@@ -45,13 +45,13 @@ public class PriceController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // TODO Auto-generated method stub
         numberEntrances.setCellValueFactory(new PropertyValueFactory<>("entrancesNumber"));
-        priceCinecard.setCellValueFactory(x-> new SimpleObjectProperty<>(String.valueOf(x.getValue().getPrice()).concat("0 €")));
+        priceCinecard.setCellValueFactory(x-> new SimpleObjectProperty<>(String.valueOf(x.getValue().getPrice()).concat("0 \u20AC")));
         monthsValidity.setCellValueFactory(new PropertyValueFactory<>("validityMonths"));
 
         cineCards.setItems(FXCollections.observableArrayList(Controller.getCinecardTypeTable().findAll()));
 
         category.setCellValueFactory(x-> new SimpleObjectProperty<>(x.getValue().getCategoria().getName().concat(" "+ x.getValue().getTipo())));
-        priceTicket.setCellValueFactory(x-> new SimpleObjectProperty<>(String.valueOf(x.getValue().getPrezzo()).concat("0 €")));
+        priceTicket.setCellValueFactory(x-> new SimpleObjectProperty<>(String.valueOf(x.getValue().getPrezzo()).concat("0 \u20AC")));
         years.setCellValueFactory(x->new SimpleObjectProperty<String>(getEta(Controller.getAgeRangeTable().getFromCategory(x.getValue().getCategoria()))));
 
         prices.setItems(FXCollections.observableArrayList(Controller.getRateTable().findAll()));

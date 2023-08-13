@@ -170,7 +170,7 @@ public class ShopController implements Initializable {
         if(!cF.isEmpty() && num!=null) {
             if(Controller.getClientTable().findByPrimaryKey(cF).isPresent()) {
                 if(Controller.getCinecardTable().hasCinecardValid(cF).isPresent()) {
-                    Controller.allertNotExist("Non è possibile acquistare una nuova cineCard perchè il cliente ne possiede già una valida");
+                    Controller.allertNotExist("Non \u00E8 possibile acquistare una nuova cineCard perchè il cliente ne possiede gi\u00E0 una valida");
                 }
                 else {
                     CineCard card = new CineCard(cF, new Date(), num, num);
@@ -254,7 +254,7 @@ public class ShopController implements Initializable {
         if(!film.isEmpty() && dataShow!=null && timeShow != null) {
             List<Seat> seatAvailable = Controller.getSeatTable().showFreeSeats(dataShow, timeShow, Integer.parseInt(film));
             if(seatAvailable.isEmpty()) {
-                Controller.allertNotExist("mi spiace non sono più disponibili posti per questa proiezione");
+                Controller.allertNotExist("mi spiace non sono pi\u00F9 disponibili posti per questa proiezione");
             } else {
                 seat.setItems(FXCollections.observableArrayList(seatAvailable));
             }
@@ -308,12 +308,12 @@ public class ShopController implements Initializable {
         posto.setCellValueFactory(new PropertyValueFactory<>("numberSeat"));
         dataAcquisto.setCellValueFactory((new PropertyValueFactory<>("purchaseDate")));
         cinecard_column.setCellValueFactory(new PropertyValueFactory<>("cineCard"));
-        prezzo.setCellValueFactory(x->new SimpleObjectProperty<String>(!x.getValue().isCineCard() ? String.valueOf(Controller.getAgeRangeTable().getPriceFromEta(x.getValue().getClientID(),x.getValue().getTypeFilm(), x.getValue().getPurchaseDate())).concat("0 €") : ""));
+        prezzo.setCellValueFactory(x->new SimpleObjectProperty<String>(!x.getValue().isCineCard() ? String.valueOf(Controller.getAgeRangeTable().getPriceFromEta(x.getValue().getClientID(),x.getValue().getTypeFilm(), x.getValue().getPurchaseDate())).concat("0 \u20AC") : ""));
 
         table1.setItems(FXCollections.observableArrayList(Controller.getTicketTable().findAll()));
 
         totalEntrances.setCellValueFactory(new PropertyValueFactory<>("ingressiTotali"));
-        priceCinecard.setCellValueFactory(x-> new SimpleObjectProperty<>(Controller.getCinecardTypeTable().findByPrimaryKey(x.getValue().getIngressiTotali()).map(y->String.valueOf(y.getPrice()).concat("0 €")).orElse(null)));
+        priceCinecard.setCellValueFactory(x-> new SimpleObjectProperty<>(Controller.getCinecardTypeTable().findByPrimaryKey(x.getValue().getIngressiTotali()).map(y->String.valueOf(y.getPrice()).concat("0 \u20AC")).orElse(null)));
         validity.setCellValueFactory(x->new SimpleObjectProperty<>(Controller.getCinecardTable().hasCinecardValid(x.getValue().getClient_cf()).isPresent()));
         dateCinecard.setCellValueFactory(new PropertyValueFactory<>("dataAcquisto"));
         avilableEntrances.setCellValueFactory(new PropertyValueFactory<>("ingressiDisponibili"));

@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import app.Controller;
 import javafx.collections.FXCollections;
@@ -42,7 +41,7 @@ public class CastController implements Initializable {
     private TableColumn<Cast,String> cognome;
 
     @FXML
-    private ComboBox<String> director;
+    private ComboBox<Cast> director;
 
     @FXML
     private TextField filmID;
@@ -119,8 +118,7 @@ public class CastController implements Initializable {
 
     @FXML
     void fill(MouseEvent event) {
-        List<String> directors = Controller.getDirectorTable().findAll().stream().map(x->x.getId()+ " : " + x.getNome() + " " + x.getCognome()).collect(Collectors.toList());
-        director.setItems(FXCollections.observableArrayList(directors));
+        director.setItems(FXCollections.observableArrayList(Controller.getDirectorTable().findAll()));
     }
 
     @FXML
@@ -133,7 +131,7 @@ public class CastController implements Initializable {
             boolean isActor = actorYes.isSelected();
             boolean isDirector = directorYes.isSelected();
             if(isActor==false && isDirector==false) {
-                Controller.allertNotExist("Non è possibile effettuare l'inserimento perchè non è ne un attore ne un regista");
+                Controller.allertNotExist("Non \u00E8 possibile effettuare l'inserimento perch\u00E8 non \u00E8 ne un attore ne un regista");
             } else {
                 int num=getMax()+1;
                 if(isActor && isDirector) {
@@ -146,23 +144,10 @@ public class CastController implements Initializable {
                 }
             }
             update();
-            //clear();
         } else {
             Controller.allert();
         }
     }
-
-    /*private void clear() {
-        name.clear();
-        surname.clear();
-        actorNo.setSelected(false);
-        actorYes.setSelected(false);
-        directorNo.setSelected(false);
-        directorYes.setSelected(false);
-        nationality.getItems().clear();
-        director.getItems().clear();
-        filmID.clear();
-    }*/
 
     private int getMax() {
         int lastActor = Controller.getActorTable().getLastID();
@@ -175,7 +160,6 @@ public class CastController implements Initializable {
         String film = filmID.getText();
         if(!film.isEmpty()) {
             table.setItems(FXCollections.observableArrayList(Controller.getActorTable().getActorFromFilm(Integer.parseInt(film))));
-            //clear();
         } else {
             Controller.allert();
         }
@@ -184,7 +168,6 @@ public class CastController implements Initializable {
     @FXML
     void showAll(ActionEvent event) {
         update();
-        //clear();
     }
 
     @FXML
@@ -197,7 +180,6 @@ public class CastController implements Initializable {
             } else {
                 Controller.allertNotExist("Non esiste un film con quel codice");
             }
-            //clear();
         } else {
             Controller.allert();
         }
@@ -210,7 +192,12 @@ public class CastController implements Initializable {
 
     @FXML
     void showStragerActors(ActionEvent event) {
-
+        Cast c = director.getSelectionModel().getSelectedItem();
+        if(c != null) {
+            table.setItems(FXCollections.observableArrayList(Controller.getActorTable().getStrangerActor(c.getId())));
+        } else {
+            Controller.allert();
+        }
     }
     
     @Override

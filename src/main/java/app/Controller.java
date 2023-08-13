@@ -33,7 +33,7 @@ public class Controller {
     final static String password = "";
     final static String dbName = "cinema";
     
-    private static App app;
+    private static JavaFXApp app;
     private static ConnectionProvider connectionProvider = new ConnectionProvider(username, password, dbName);
     private static FilmsTable filmsTable = new FilmsTable(connectionProvider.getMySQLConnection());
     private static GenresTable genreTable = new GenresTable(connectionProvider.getMySQLConnection());
@@ -57,7 +57,7 @@ public class Controller {
     private static ClientsTable clientTable = new ClientsTable(connectionProvider.getMySQLConnection());
     private static NationalitiesTable nationalityTable = new NationalitiesTable(connectionProvider.getMySQLConnection());
 
-    public Controller(final App application) {
+    public Controller(final JavaFXApp application) {
         app = application;
     }
 

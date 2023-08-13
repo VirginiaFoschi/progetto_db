@@ -48,7 +48,10 @@ public class ClientController implements Initializable {
     private TextField cf2;
 
     @FXML
-    private Button showCinecards;
+    private Button search;
+
+    @FXML
+    private Button showAll;
 
     @FXML
     private TableView<Client> table;
@@ -86,26 +89,38 @@ public class ClientController implements Initializable {
                 Client client = new Client(clientID,clientName, clienteSurname, Utils.localDateToDate(date), clientTel.isEmpty() ? Optional.empty() : Optional.of(clientTel), clientMail);
                 Controller.getClientTable().save(client);
                 table.setItems(FXCollections.observableArrayList(Controller.getClientTable().findAll()));
-                //clear();
+                clear();
             }
         } else {
             Controller.allert();
         }
     }
 
-    /*private void clear() {
+    private void clear() {
         cf.clear();
+        cf2.clear();
         name.clear();
         surname.clear();
         mail.clear();
         tel.clear();
         dateOfBirth.getEditor().clear();
-    }*/
+    }
 
-    /*@FXML
-    void showCinecards(ActionEvent event) {
+    @FXML
+    void searchClient(ActionEvent event) {
+        String client = cf2.getText();
+        if(!client.isEmpty()) {
+            Controller.getClientTable().findByPrimaryKey(client).ifPresentOrElse(x->table.setItems(FXCollections.observableArrayList(x)),()->table.getItems().clear());
+            clear();
+        } else {
+            Controller.allert();
+        }
+    }
 
-    } */
+    @FXML
+    void showAll(ActionEvent event) {
+        table.setItems(FXCollections.observableArrayList(Controller.getClientTable().findAll()));
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

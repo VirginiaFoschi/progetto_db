@@ -164,7 +164,7 @@ public class ShowingController implements Initializable {
             if(Controller.getTheatreTable().salaIs3D(codiceSala)) {
                 return true;
             } else {
-                Controller.allertNotExist("la sala selezionata non è adibita per la proiezione di film in 3D");
+                Controller.allertNotExist("la sala selezionata non \u00E8 adibita per la proiezione di film in 3D");
                 return false;
             }
         }
@@ -183,7 +183,7 @@ public class ShowingController implements Initializable {
     
     private boolean areNotOtherShowings(Film film, LocalDate data, String ora) {
         if(Controller.getShowingTable().areOtherShowings(film,data,ora)) {
-            Controller.allertNotExist("il film scelto è già proiettato in un'altra sala");
+            Controller.allertNotExist("il film scelto \u00E8 gi\u00E0 proiettato in un'altra sala");
             return false;
         } else {
             return true;
@@ -194,7 +194,7 @@ public class ShowingController implements Initializable {
         if(Controller.getFilmDetailTable().hasSelectedMode(id,programmingMode)) {
             return true;
         } else {
-            Controller.allertNotExist("il film scelto non è disponibile nella modalità di proiezione selezionata");
+            Controller.allertNotExist("il film scelto non \u00E8 disponibile nella modalit\u00E0 di proiezione selezionata");
             return false;
         }
     }
@@ -203,7 +203,7 @@ public class ShowingController implements Initializable {
         if(Controller.getShowingTable().isTheaterEmpty(codiceSala,data,ora,duration)) {
             return true;
         } else {
-            Controller.allertNotExist("la sala selezionata è occupata");
+            Controller.allertNotExist("la sala selezionata \u00E8 occupata");
             return false;
         }
     }

@@ -30,6 +30,9 @@
             <TableColumn fx:id="mail_column" prefWidth="145.5999755859375" text="e-mail" />
         </columns>
         </TableView>
-        <DatePicker fx:id="dateOfBirth" layoutX="13.0" layoutY="112.0" prefHeight="26.0" prefWidth="149.0" promptText="data di nascita" />
+        <TextField fx:id="cf2" layoutX="13.0" layoutY="285.0" promptText="codice fiscale cliente *" />
+        <Button fx:id="search" layoutX="13.0" layoutY="320.0" mnemonicParsing="false" onAction="#searchClient" text="Cerca cliente" />
+        <DatePicker fx:id="dateOfBirth" layoutX="13.0" layoutY="112.0" prefHeight="26.0" prefWidth="149.0" promptText="data di nascita *" />
+        <Button fx:id="showAll" layoutX="14.0" layoutY="390.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutti i clienti" />
     </children>
 </AnchorPane>

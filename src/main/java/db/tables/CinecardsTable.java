@@ -191,7 +191,7 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
                             "FROM " + TABLE_NAME + " C, " + Controller.getCinecardTypeTable().getTableName() + " CT "+
                             "WHERE C.numeroIngressiTotali = CT.numeroIngressiTotali "+
                             "AND CF = ? AND numeroIngressiDisponibili > 0 "+
-                            "AND DATE_ADD(dataAcquisto,INTERVAL CT.mesiValidità MONTH) >= NOW() ";
+                            "AND DATE_ADD(dataAcquisto,INTERVAL CT.mesiValidit\u00E0 MONTH) >= NOW() ";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data

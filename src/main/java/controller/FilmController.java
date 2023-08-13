@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -85,11 +86,21 @@ public class FilmController implements Initializable {
     @FXML
     private TableColumn<FilmExtension, String> trama;
 
-    /*private void clear() {
-        actorID.clear();
-        date.getEditor().clear();
-        filmID.clear();
-    }*/
+    @FXML
+    private ComboBox<String> genre;
+
+    @FXML
+    private Button showGenreFilm;
+
+    @FXML
+    void showGenreFilm(ActionEvent event) {
+        String g = genre.getSelectionModel().getSelectedItem();
+        if(g!= null) {
+            updateTable(Controller.getFilmsTable().getFilmsFromGenre(g));
+        } else {
+            Controller.allert();
+        }
+    }
 
     @FXML
     void deleteFilm(ActionEvent event) {
@@ -105,7 +116,6 @@ public class FilmController implements Initializable {
             } else {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
-            //clear();
         }
     }
 
@@ -126,8 +136,9 @@ public class FilmController implements Initializable {
         if(!id.isEmpty()) {
             Optional<Film> film = Controller.getFilmsTable().findByPrimaryKey(Integer.parseInt(id));
             updateTable(film.isPresent() ? List.of(film.get()) : new ArrayList<>());
+        } else {
+            Controller.allert();
         }
-        //clear();
     }
 
     @FXML
@@ -136,8 +147,9 @@ public class FilmController implements Initializable {
         if(!actor.isEmpty()) {
             List<Film> films = Controller.getFilmsTable().fromIDtoFilm(Controller.getParticipationTable().getFilmsFromActor(Integer.parseInt(actor)));
             updateTable(films);
+        } else {
+            Controller.allert();
         }
-        //clear();
     }
 
     @FXML
@@ -148,8 +160,11 @@ public class FilmController implements Initializable {
     @FXML
     void showFilm(ActionEvent event) {
         LocalDate data = date.getValue();
-        updateTable(Controller.getFilmsTable().getFilmsOnDate(Utils.localDateToDate(data)));
-        //clear();
+        if(data != null) {
+            updateTable(Controller.getFilmsTable().getFilmsOnDate(Utils.localDateToDate(data)));
+        } else {
+            Controller.allert();
+        }
     }
 
     @Override
@@ -165,6 +180,8 @@ public class FilmController implements Initializable {
         genere.setCellValueFactory(new PropertyValueFactory<FilmExtension,String>("genres"));
 
         updateTable(Controller.getFilmsTable().findAll());
+
+        genre.setItems(FXCollections.observableArrayList(Controller.getGenreTable().findAll().stream().map(x->x.getType()).toList()));
     }
 
     public void updateTable(final List<Film> films) {

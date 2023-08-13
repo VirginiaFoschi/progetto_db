@@ -22,7 +22,7 @@ public class Nationality {
 
     @Override
     public String toString() {
-        return "Genre [name=" + name + "]";
+        return "Nationality [name=" + name + "]";
     }
 
     @Override

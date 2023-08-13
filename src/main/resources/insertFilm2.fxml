@@ -18,7 +18,7 @@
             <TextField fx:id="titolo" layoutX="13.0" layoutY="14.0" onDragExited="#setGenre" prefHeight="26.0" prefWidth="206.0" promptText="titolo *" />
             <TextField fx:id="durata" layoutX="13.0" layoutY="102.0" prefHeight="26.0" prefWidth="94.0" promptText="durata (min) *" />
             <TextField fx:id="anno" layoutX="119.0" layoutY="102.0" prefHeight="26.0" prefWidth="98.0" promptText="anno di Uscita *" />
-            <TextArea fx:id="trama" layoutX="13.0" layoutY="192.0" prefHeight="84.0" prefWidth="351.0" promptText="trama *" />
+            <TextArea fx:id="trama" layoutX="13.0" layoutY="192.0" prefHeight="84.0" prefWidth="351.0" promptText="trama" />
             <Button fx:id="insertFilm" layoutX="237.0" layoutY="413.0" mnemonicParsing="false" onAction="#insertFilm" prefHeight="24.0" prefWidth="126.0" text="Inserisci Film">
                <font>
                   <Font size="14.0" />

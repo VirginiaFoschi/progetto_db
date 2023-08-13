@@ -18,7 +18,7 @@
         <columns>
             <TableColumn fx:id="id" prefWidth="54.4000244140625" text="codice" />
             <TableColumn fx:id="titolo" prefWidth="96.00001525878906" text="titolo" />
-            <TableColumn fx:id="durata" prefWidth="84.0" text="durata (min)" />
+            <TableColumn fx:id="durata" prefWidth="84.0" text="durata" />
             <TableColumn fx:id="anno" prefWidth="61.5999755859375" text="anno" />
             <TableColumn fx:id="trama" prefWidth="146.39996337890625" text="trama" />
             <TableColumn prefWidth="61.60003662109375" text="periodo">
@@ -32,12 +32,14 @@
         </TableView>
         <TextField fx:id="filmID" layoutX="13.0" layoutY="94.0" promptText="codice film *" />
         <Button fx:id="searchFilm" layoutX="13.0" layoutY="127.0" mnemonicParsing="false" onAction="#searchFilm" prefHeight="26.0" prefWidth="69.0" text="Cerca film" />
-        <Button fx:id="showFilm" layoutX="13.0" layoutY="231.0" mnemonicParsing="false" onAction="#showFilm" text="Vedi film in proiezione" />
+        <Button fx:id="showFilm" layoutX="13.0" layoutY="231.0" mnemonicParsing="false" onAction="#showFilm" text="Vedi film" />
         <TextField fx:id="actorID" layoutX="13.0" layoutY="299.0" promptText="codice attore *" />
-        <Button fx:id="showActorFilm" layoutX="13.0" layoutY="333.0" mnemonicParsing="false" onAction="#showActorFilm" text="Visualizza film" />
+        <Button fx:id="showActorFilm" layoutX="13.0" layoutY="333.0" mnemonicParsing="false" onAction="#showActorFilm" text="Visualizza Film" />
         <Button fx:id="deleteFilm" layoutX="85.0" layoutY="127.0" mnemonicParsing="false" onAction="#deleteFilm" prefHeight="26.0" prefWidth="77.0" text="Elimina film" />
         <Button fx:id="insertFilm" layoutX="13.0" layoutY="29.0" mnemonicParsing="false" onAction="#insertFilm" text="Inserisci film" />
         <Button fx:id="film2Dand3D" layoutX="13.0" layoutY="406.0" mnemonicParsing="false" onAction="#filmInAllModes" text="Film in 2D e in 3D" />
-        <Button fx:id="showAll" layoutX="13.0" layoutY="481.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutti i film" />
+        <Button fx:id="showAll" layoutX="13.0" layoutY="587.0" mnemonicParsing="false" onAction="#showAll" text="Visualizza tutti i film" />
         <DatePicker fx:id="date" layoutX="13.0" layoutY="198.0" prefHeight="26.0" prefWidth="149.6" promptText="data *" />
+        <ComboBox fx:id="genre" layoutX="13.0" layoutY="474.0" prefWidth="150.0" promptText="genere *" />
+        <Button fx:id="showGenreFilm" layoutX="13.0" layoutY="506.0" mnemonicParsing="false" onAction="#showGenreFilm" text="Visualizza film" />
     </children></AnchorPane>

@@ -79,7 +79,7 @@ public final class ActorsTable implements Table<Cast, Integer> {
                 final int id = resultSet.getInt("codiceAttore");
                 final String nome = resultSet.getString("nome");
                 final String cognome = resultSet.getString("cognome");
-                final String nazionalita = resultSet.getString("nazionalità");
+                final String nazionalita = resultSet.getString("nazionalit\u00E0");
                 // After retrieving all the data we create a film object
                 final Cast actor = new Actor(id,nome,cognome,nazionalita);
                 actors.add(actor);
@@ -100,7 +100,7 @@ public final class ActorsTable implements Table<Cast, Integer> {
 
     @Override
     public boolean save(final Cast cast) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(codiceAttore,nome,cognome,nazionalità) VALUES (?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(codiceAttore,nome,cognome,nazionalit\u00E0) VALUES (?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, cast.getId());
             statement.setString(2, cast.getNome());
@@ -132,7 +132,7 @@ public final class ActorsTable implements Table<Cast, Integer> {
             "UPDATE " + TABLE_NAME + " SET " +
                 "nome = ?," + 
                 "cognome = ?," +
-                "nazionalita = ?" +
+                "nazionalit\u00E0 = ?" +
             "WHERE codiceAttore = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1,cast.getNome());
@@ -175,6 +175,29 @@ public final class ActorsTable implements Table<Cast, Integer> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public List<Cast> getStrangerActor(final int directorID) {
+        final String query = "SELECT A.* "+
+                            "FROM " + TABLE_NAME + " A " + 
+                            "WHERE NOT EXISTS ( SELECT A1.* " +
+                                            "FROM " + TABLE_NAME + " A1, " + Controller.getParticipationTable().getTableName() + " P, " + Controller.getFilmsTable().getTableName() + " F "+
+                                            "WHERE A1.codiceAttore = P.codiceAttore " +
+                                            "AND P.codiceFilm = F.codiceFilm " +
+                                            "AND A1.codiceAttore = A.codiceAttore " +
+                                            "AND F.codiceRegista = ? )";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setInt(1,directorID);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) film from the ResultSet
+            return readActorsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }      
     }
 
     public List<Cast> getActorsInOrder(final List<Integer> list ) {

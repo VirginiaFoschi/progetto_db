@@ -45,7 +45,7 @@ public final class NationalitiesTable implements Table<Nationality, String> {
     @Override
     public Optional<Nationality> findByPrimaryKey(final String name) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE nomeNazionalità = ?";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE nomeNazionalit\u00E0 = ?";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -73,7 +73,7 @@ public final class NationalitiesTable implements Table<Nationality, String> {
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final String name = resultSet.getString("nomeNazionalità");
+                final String name = resultSet.getString("nomeNazionalit\u00E0");
                 // After retrieving all the data we create a Nationality object
                 final Nationality nationality = new Nationality(name);
                 nationalities.add(nationality);
@@ -94,7 +94,7 @@ public final class NationalitiesTable implements Table<Nationality, String> {
 
     @Override
     public boolean save(final Nationality Nationality) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(nomeNazionalità) VALUES (?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(nomeNazionalit\u00E0) VALUES (?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, Nationality.getName());
             statement.executeUpdate();
@@ -108,7 +108,7 @@ public final class NationalitiesTable implements Table<Nationality, String> {
 
     @Override
     public boolean delete(final String name) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE nomeNazionalità = ?";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE nomeNazionalit\u00E0 = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, name);
             return statement.executeUpdate() > 0;
@@ -121,8 +121,8 @@ public final class NationalitiesTable implements Table<Nationality, String> {
     public boolean update(final Nationality Nationality) {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
-                "nomeNazionalità = ?" +
-            "WHERE nomeNazionalità = ?";
+                "nomeNazionalit\u00E0 = ?" +
+            "WHERE nomeNazionalit\u00E0 = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1,Nationality.getName());
             return statement.executeUpdate() > 0;

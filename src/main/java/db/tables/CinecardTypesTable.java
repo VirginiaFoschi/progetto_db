@@ -79,7 +79,7 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
                 // To get the values of the columns of the row currently pointed we use the get methods 
                 final int entrancesNumber = resultSet.getInt("numeroIngressiTotali");
                 final Double price = resultSet.getDouble("prezzo");
-                final int validityMonths = resultSet.getInt("mesiValidità");
+                final int validityMonths = resultSet.getInt("mesiValidit\u00E0");
                 // After retrieving all the data we create a film object
                 final CinecardType cinecardType = new CinecardType(entrancesNumber,price,validityMonths);
                 cinecardTypes.add(cinecardType);
@@ -100,7 +100,7 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
 
     @Override
     public boolean save(final CinecardType cinecardType) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(numeroIngressiTotali,prezzo,mesiValidità) VALUES (?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(numeroIngressiTotali,prezzo,mesiValidit\u00E0) VALUES (?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1,cinecardType.getEntrancesNumber());
             statement.setDouble(2, cinecardType.getPrice());
@@ -130,7 +130,7 @@ public final class CinecardTypesTable implements Table<CinecardType, Integer> {
         final String query =
             "UPDATE " + TABLE_NAME + " SET " +
                 "prezzo = ?," +
-                "mesiValidità = ? " +
+                "mesiValidit\u00E0 = ? " +
             "WHERE numeroIngressiTotali = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDouble(1,cinecardType.getPrice());
