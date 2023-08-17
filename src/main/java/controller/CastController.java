@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import app.Controller;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -126,7 +127,7 @@ public class CastController implements Initializable {
         String castName = name.getText();
         String castSurname = surname.getText();
         String castNationality = nationality.getSelectionModel().getSelectedItem();
-        if(!castName.isEmpty() && !castSurname.isEmpty() && castNationality != null
+        if(!castName.isEmpty() && !castSurname.isEmpty()
         && (actorYes.isSelected() || actorNo.isSelected()) && (directorNo.isSelected() || directorYes.isSelected())) {
             boolean isActor = actorYes.isSelected();
             boolean isDirector = directorYes.isSelected();
@@ -135,12 +136,12 @@ public class CastController implements Initializable {
             } else {
                 int num=getMax()+1;
                 if(isActor && isDirector) {
-                    Controller.getDirectorTable().save(new Director(num,castName,castSurname,castNationality));
-                    Controller.getActorTable().save(new Actor(num,castName,castSurname,castNationality));
+                    Controller.getDirectorTable().save(new Director(num,castName,castSurname,Optional.ofNullable(castNationality)));
+                    Controller.getActorTable().save(new Actor(num,castName,castSurname,Optional.ofNullable(castNationality)));
                 } else if(isActor) {
-                    Controller.getActorTable().save(new Actor(num,castName,castSurname,castNationality));
+                    Controller.getActorTable().save(new Actor(num,castName,castSurname,Optional.ofNullable(castNationality)));
                 } else {
-                    Controller.getDirectorTable().save(new Director(num,castName,castSurname,castNationality));
+                    Controller.getDirectorTable().save(new Director(num,castName,castSurname,Optional.ofNullable(castNationality)));
                 }
             }
             update();
@@ -205,7 +206,7 @@ public class CastController implements Initializable {
         id.setCellValueFactory(new PropertyValueFactory<Cast, Integer>("id"));
         nome.setCellValueFactory(new PropertyValueFactory<Cast, String>("nome"));
         cognome.setCellValueFactory(new PropertyValueFactory<Cast,String>("cognome"));
-        nazionalita.setCellValueFactory(new PropertyValueFactory<Cast,String>("nazionalita"));
+        nazionalita.setCellValueFactory(x-> new SimpleObjectProperty<>(x.getValue().getNazionalita().orElse(null)));
         isRegista.setCellValueFactory(new PropertyValueFactory<Cast,Boolean>("regista"));
 
         update();

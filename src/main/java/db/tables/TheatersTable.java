@@ -75,7 +75,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
                 // To get the values of the columns of the row currently pointed we use the get methods 
                 final int id = resultSet.getInt("codiceSala");
                 final Boolean type3D = resultSet.getBoolean("3D");
-                final int surface = resultSet.getInt("superficie");
+                final Optional<Integer> surface = Optional.ofNullable(resultSet.getInt("superficie"));
                 final int capacity = resultSet.getInt("capienza");
                 // After retrieving all the data we create a film object
                 final Theater theater = new Theater(id,type3D,surface,capacity);
@@ -101,7 +101,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, theater.getId());
             statement.setBoolean(2, theater.getType());
-            statement.setInt(3, theater.getSurface());
+            statement.setInt(3, theater.getSurface().orElse(null));
             statement.setInt(4, theater.getCapacity());
             statement.executeUpdate();
             return true;
@@ -133,7 +133,7 @@ public final class TheatersTable implements Table<Theater, Integer> {
             "WHERE codiceSala = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setBoolean(1,theater.getType());
-            statement.setInt(2,theater.getSurface());
+            statement.setInt(2,theater.getSurface().orElse(null));
             statement.setInt(3,theater.getCapacity());
             statement.setInt(4,theater.getId());
             return statement.executeUpdate() > 0;

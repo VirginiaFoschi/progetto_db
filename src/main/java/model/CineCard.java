@@ -8,12 +8,26 @@ public class CineCard {
     private final Date dataAcquisto;
     private final int ingressiDisponibili;
     private final int ingressiTotali;
+    private final boolean isValid;
     
     public CineCard(String client_cf, Date dataAcquisto, int ingressiDisponibili, int ingressiTotali) {
         this.client_cf = client_cf;
         this.dataAcquisto = dataAcquisto;
         this.ingressiDisponibili = ingressiDisponibili;
         this.ingressiTotali = ingressiTotali;
+        this.isValid=true;
+    }
+
+    public CineCard(String client_cf, Date dataAcquisto, int ingressiDisponibili, int ingressiTotali, boolean isValid) {
+        this.client_cf = client_cf;
+        this.dataAcquisto = dataAcquisto;
+        this.ingressiDisponibili = ingressiDisponibili;
+        this.ingressiTotali = ingressiTotali;
+        this.isValid = isValid;
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 
     public String getClient_cf() {
@@ -40,6 +54,7 @@ public class CineCard {
         result = prime * result + ((dataAcquisto == null) ? 0 : dataAcquisto.hashCode());
         result = prime * result + ingressiDisponibili;
         result = prime * result + ingressiTotali;
+        result = prime * result + (isValid ? 1231 : 1237);
         return result;
     }
 
@@ -66,15 +81,9 @@ public class CineCard {
             return false;
         if (ingressiTotali != other.ingressiTotali)
             return false;
+        if (isValid != other.isValid)
+            return false;
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "CineCard [client_cf=" + client_cf + ", dataAcquisto=" + dataAcquisto + ", ingressiDisponibili="
-                + ingressiDisponibili + ", ingressiTotali=" + ingressiTotali + "]";
-    }
-
     
-
 }

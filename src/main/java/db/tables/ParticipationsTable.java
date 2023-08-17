@@ -182,9 +182,6 @@ public final class ParticipationsTable implements Table<Participation, Pair<Film
                             "FROM " + Controller.getActorTable().getTableName() + " A LEFT JOIN " + TABLE_NAME + " P "+
                             "ON P.codiceAttore = A.codiceAttore " +
                             "GROUP BY A.codiceAttore, nome, cognome, nazionalit\u00E0 ORDER BY COUNT(codiceFilm) DESC ";
-                            /*"FROM " + TABLE_NAME + " P , " + Controller.getActorTable().getTableName() + " A " +
-                            "WHERE P.codiceAttore = A.codiceAttore " +
-                            "GROUP BY A.codiceAttore, nome, cognome, nazionalit\u00E0 ORDER BY COUNT(codiceFilm) DESC "; */
         // 2. Prepare a statement inside a try-with-resources
          try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             final ResultSet resultSet = statement.executeQuery();
@@ -192,7 +189,7 @@ public final class ParticipationsTable implements Table<Participation, Pair<Film
                 final int id = resultSet.getInt("codiceAttore");
                 final String nome = resultSet.getString("nome");
                 final String cognome = resultSet.getString("cognome");
-                final String nazionalita = resultSet.getString("nazionalit\u00E0");
+                final Optional<String> nazionalita = Optional.ofNullable(resultSet.getString("nazionalit\u00E0"));
                 Cast actor = new Actor(id, nome, cognome, nazionalita);
                 actors.add(actor);
             }

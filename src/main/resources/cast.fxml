@@ -41,6 +41,6 @@
     <Text layoutX="13.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="è un regista? *" />
     <CheckBox fx:id="directorYes" layoutX="102.0" layoutY="152.0" mnemonicParsing="false" onAction="#handleDirectorYes" text="YES" />
     <CheckBox fx:id="directorNo" layoutX="163.0" layoutY="152.0" mnemonicParsing="false" onAction="#handleDirectorNo" text="NO" />
-    <ComboBox fx:id="nationality" layoutX="13.0" layoutY="90.0" prefWidth="149.6" promptText="nazionalità *" />
+    <ComboBox fx:id="nationality" layoutX="13.0" layoutY="90.0" prefWidth="149.6" promptText="nazionalità" />
   </children></AnchorPane>
       

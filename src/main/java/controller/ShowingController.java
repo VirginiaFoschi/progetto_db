@@ -100,6 +100,9 @@ public class ShowingController implements Initializable {
     @FXML
     private TableColumn<Showing,String> time_column;
 
+    @FXML
+    private TableColumn<Showing,String> is3D;
+
     /*private void clear() {
         date.getEditor().clear();
         date3.getItems().clear();
@@ -303,7 +306,8 @@ public class ShowingController implements Initializable {
         theater_column.setCellValueFactory(new PropertyValueFactory<>("theaterID"));
         booked.setCellValueFactory(new PropertyValueFactory<>("numberSpectator"));
         allSeats.setCellValueFactory(x->new SimpleObjectProperty<Integer>(Controller.getTheatreTable().findByPrimaryKey(x.getValue().getTheaterID()).get().getCapacity()));
-        
+        is3D.setCellValueFactory(new PropertyValueFactory<>("programmingMode"));
+
         table1.setItems(FXCollections.observableArrayList(Controller.getShowingTable().findAll()));
 
         theater_column2.setCellValueFactory(new PropertyValueFactory<>("theater"));

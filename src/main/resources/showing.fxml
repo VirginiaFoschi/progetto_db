@@ -17,7 +17,7 @@
         <TextField fx:id="filmID" layoutX="13.0" layoutY="14.0" prefHeight="26.0" prefWidth="160.0" promptText="codice film *" />
         <TextField fx:id="startTime" layoutX="13.0" layoutY="79.0" prefHeight="26.0" prefWidth="161.0" promptText="ora Inizio *" />
         <Button fx:id="insertShow" layoutX="13.0" layoutY="176.0" mnemonicParsing="false" onAction="#insertShow" prefHeight="22.0" prefWidth="118.0" text="Inserisci proiezione" />
-        <TableView fx:id="table1" layoutX="219.0" layoutY="15.0" prefHeight="354.0" prefWidth="619.0">
+        <TableView fx:id="table1" layoutX="219.0" layoutY="15.0" prefHeight="354.0" prefWidth="675.0">
         <columns>
             <TableColumn fx:id="film_column" prefWidth="97.60005187988281" text="film" />
             <TableColumn fx:id="date_column" prefWidth="96.0" text="data" />
@@ -25,6 +25,7 @@
             <TableColumn fx:id="theater_column" prefWidth="75.20001220703125" text="sala" />
             <TableColumn fx:id="booked" prefWidth="140.7999267578125" text="N. posti prenotati" />
             <TableColumn fx:id="allSeats" prefWidth="105.5999755859375" text="N. posti totali" />
+            <TableColumn fx:id="is3D" prefWidth="57.599963378906295" text="tipo" />
         </columns>
         </TableView>
         <TextField fx:id="filmID2" layoutX="13.0" layoutY="241.0" promptText="codice film *" />

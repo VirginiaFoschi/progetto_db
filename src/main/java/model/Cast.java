@@ -1,14 +1,16 @@
 package model;
 
+import java.util.Optional;
+
 public class Cast {
     
     private final int codice;
     private final String nome;
     private final String cognome;
-    private final String nazionalita;
+    private final Optional<String> nazionalita;
     private final Boolean regista;
 
-    public Cast(int codice, String nome, String cognome, String nazionalita, Boolean regista) {
+    public Cast(int codice, String nome, String cognome, Optional<String> nazionalita, Boolean regista) {
         this.codice = codice;
         this.nome = nome;
         this.cognome = cognome;
@@ -32,7 +34,7 @@ public class Cast {
         return cognome;
     }
 
-    public String getNazionalita() {
+    public Optional<String> getNazionalita() {
         return nazionalita;
     }
 

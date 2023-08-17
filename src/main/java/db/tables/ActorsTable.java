@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import app.Controller;
 import db.Table;
@@ -79,7 +78,7 @@ public final class ActorsTable implements Table<Cast, Integer> {
                 final int id = resultSet.getInt("codiceAttore");
                 final String nome = resultSet.getString("nome");
                 final String cognome = resultSet.getString("cognome");
-                final String nazionalita = resultSet.getString("nazionalit\u00E0");
+                final Optional<String> nazionalita = Optional.ofNullable(resultSet.getString("nazionalit\u00E0"));
                 // After retrieving all the data we create a film object
                 final Cast actor = new Actor(id,nome,cognome,nazionalita);
                 actors.add(actor);
@@ -105,7 +104,7 @@ public final class ActorsTable implements Table<Cast, Integer> {
             statement.setInt(1, cast.getId());
             statement.setString(2, cast.getNome());
             statement.setString(3, cast.getCognome());
-            statement.setString(4, cast.getNazionalita());
+            statement.setString(4, cast.getNazionalita().orElse(null));
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -137,7 +136,7 @@ public final class ActorsTable implements Table<Cast, Integer> {
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1,cast.getNome());
             statement.setString(2,cast.getCognome());
-            statement.setString(3,cast.getNazionalita());
+            statement.setString(3,cast.getNazionalita().orElse(null));
             statement.setInt(4,cast.getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
@@ -198,10 +197,6 @@ public final class ActorsTable implements Table<Cast, Integer> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }      
-    }
-
-    public List<Cast> getActorsInOrder(final List<Integer> list ) {
-        return list.stream().map(x->this.findByPrimaryKey(x).orElse(null)).filter(x->x!=null).collect(Collectors.toList());
     }
 
 }

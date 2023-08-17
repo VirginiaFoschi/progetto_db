@@ -90,7 +90,7 @@ public class InsertFilmController implements Initializable{
                 if(startDate.isBefore(endDate) || startDate.equals(endDate)) {
                     Period period =  new Period(Utils.localDateToDate(startDate),Utils.localDateToDate(endDate));
                     Controller.getPeriodTable().save(period);
-                    Film film = new Film(title, Integer.parseInt(duration), Integer.parseInt(year), Optional.of(plot),period,director.getId());
+                    Film film = new Film(title, Integer.parseInt(duration), Integer.parseInt(year), Optional.ofNullable(plot),period,director.getId());
                     Controller.getFilmsTable().save(film);
                     int filmID = Controller.getFilmsTable().getLastID();
                     genre.forEach(x->Controller.getCorrispondenceTable().save(new Corrispondence(filmID, x.getType())));

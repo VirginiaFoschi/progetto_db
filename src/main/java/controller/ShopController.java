@@ -313,7 +313,7 @@ public class ShopController implements Initializable {
 
         totalEntrances.setCellValueFactory(new PropertyValueFactory<>("ingressiTotali"));
         priceCinecard.setCellValueFactory(x-> new SimpleObjectProperty<>(Controller.getCinecardTypeTable().findByPrimaryKey(x.getValue().getIngressiTotali()).map(y->String.valueOf(y.getPrice()).concat("0 \u20AC")).orElse(null)));
-        validity.setCellValueFactory(x->new SimpleObjectProperty<>(Controller.getCinecardTable().hasCinecardValid(x.getValue().getClient_cf()).isPresent()));
+        validity.setCellValueFactory(new PropertyValueFactory<>("valid"));
         dateCinecard.setCellValueFactory(new PropertyValueFactory<>("dataAcquisto"));
         avilableEntrances.setCellValueFactory(new PropertyValueFactory<>("ingressiDisponibili"));
 

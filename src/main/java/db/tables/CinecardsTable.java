@@ -178,7 +178,9 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
             //    here we extract the first (and only) film from the ResultSet
-            return readCineCardsFromResultSet(resultSet);
+            List<CineCard> all = readCineCardsFromResultSet(resultSet);
+            Optional<CineCard> card = hasCinecardValid(cf);
+            return all.stream().map(x->card.isPresent() && !x.equals(card.get()) ? new CineCard(x.getClient_cf(),x.getDataAcquisto(),0,x.getIngressiTotali(),false) : x ).toList();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -204,4 +206,5 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
             throw new IllegalStateException(e);
         }
     }
+
 }
