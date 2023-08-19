@@ -41,7 +41,7 @@ public class ShowingController implements Initializable {
     private ComboBox<Date> date3;
 
     @FXML
-    private TableColumn<Showing,Date> date_column;
+    private TableColumn<Showing,String> date_column;
 
     @FXML
     private TextField filmID;
@@ -103,18 +103,6 @@ public class ShowingController implements Initializable {
     @FXML
     private TableColumn<Showing,String> is3D;
 
-    /*private void clear() {
-        date.getEditor().clear();
-        date3.getItems().clear();
-        filmID.clear();
-        filmID2.clear();
-        filmID3.clear();
-        startTime.clear();
-        theaters.getItems().clear();
-        time.getItems().clear();
-        modProg.getItems().clear();
-    }*/
-
     /*@FXML
     void insertShow(ActionEvent event) {
         String id = filmID.getText();
@@ -154,7 +142,6 @@ public class ShowingController implements Initializable {
             } else {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
-            //clear();
         } else {
             Controller.allert();
         }
@@ -301,7 +288,7 @@ public class ShowingController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         film_column.setCellValueFactory(new PropertyValueFactory<>("filmID"));
-        date_column.setCellValueFactory(new PropertyValueFactory<>("data"));
+        date_column.setCellValueFactory(x->new SimpleObjectProperty<String>(utils.Utils.printDate(x.getValue().getData())));
         time_column.setCellValueFactory(new PropertyValueFactory<>("startTime"));
         theater_column.setCellValueFactory(new PropertyValueFactory<>("theaterID"));
         booked.setCellValueFactory(new PropertyValueFactory<>("numberSpectator"));

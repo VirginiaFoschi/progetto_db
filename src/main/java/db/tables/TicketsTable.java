@@ -89,7 +89,7 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
                 final Integer numberSeat = resultSet.getInt("numeroPosto");
                 final Date dateShow = Utils.sqlDateToDate(resultSet.getDate("dataProiezione"));
                 final String startTime = Utils.sqlTimeToTime(resultSet.getTime("oraInizio"));
-                final Date purchaseDate = Utils.sqlDateToDate(resultSet.getDate("dataAcquisto"));
+                final Date purchaseDate = Utils.sqlDateToDateWithTime(resultSet.getTimestamp("dataAcquisto"));
                 final boolean cineCard = resultSet.getBoolean("cineCard");
                 final String clientID = resultSet.getString("CFcliente");
                 final int filmId = resultSet.getInt("codiceFilm");
@@ -114,7 +114,7 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
 
     @Override
     public boolean save(final Ticket ticket) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(dataProiezione,oraInizio,codiceSala,letteraFila,numeroPosto,dataAcquisto,cineCard,CFcliente,codiceFilm,tipo) VALUES (?,?,?,?,?,CURRENT_DATE(),?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(dataProiezione,oraInizio,codiceSala,letteraFila,numeroPosto,dataAcquisto,cineCard,CFcliente,codiceFilm,tipo) VALUES (?,?,?,?,?,NOW(),?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1,Utils.dateToSqlDate(ticket.getDateShow()));
             statement.setTime(2,Utils.timeToSqlTime(ticket.getStartTime()));
@@ -189,6 +189,26 @@ public final class TicketsTable implements Table<Ticket,Pair<Seat,Showing>> {
             // 5. Do something with the result of the query execution; 
             //    here we extract the first (and only) Ticket from the ResultSet
             return readTicketsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public boolean hasAlreadyUsedCinecard(String client, int film, Date dataShow, String timeShow) {
+        // 1. Define the query with the "?" placeholder(s)
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CFcliente = ? AND dataProiezione = ? AND oraInizio = ? AND codiceFilm = ? AND cineCard = true ";
+        // 2. Prepare a statement inside a try-with-resources
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // 3. Fill in the "?" with actual data
+            statement.setString(1, client);
+            statement.setDate(2,Utils.dateToSqlDate(dataShow));
+            statement.setTime(3, Utils.timeToSqlTime(timeShow));
+            statement.setInt(4, film);
+            // 4. Execute the query, this operations returns a ResultSet
+            final ResultSet resultSet = statement.executeQuery();
+            // 5. Do something with the result of the query execution; 
+            //    here we extract the first (and only) Ticket from the ResultSet
+            return resultSet.next();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }

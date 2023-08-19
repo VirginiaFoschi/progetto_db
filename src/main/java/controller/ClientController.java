@@ -2,7 +2,6 @@ package controller;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -63,7 +62,7 @@ public class ClientController implements Initializable {
     private TableColumn<Client, String> cognome;
 
     @FXML
-    private TableColumn<Client, Date> dataNascita;
+    private TableColumn<Client, String> dataNascita;
 
     @FXML
     private TableColumn<Client, String> mail_column;
@@ -127,7 +126,7 @@ public class ClientController implements Initializable {
         cf_column.setCellValueFactory(new PropertyValueFactory<Client, String>("cf"));
         nome.setCellValueFactory(new PropertyValueFactory<Client, String>("nome"));
         cognome.setCellValueFactory(new PropertyValueFactory<Client, String>("cognome"));
-        dataNascita.setCellValueFactory(new PropertyValueFactory<Client, Date>("dataNascita"));
+        dataNascita.setCellValueFactory(x->new SimpleObjectProperty<String>(utils.Utils.printDate(x.getValue().getDataNascita())));//new PropertyValueFactory<Client, Date>("dataNascita"));
         telefono.setCellValueFactory(x->new SimpleObjectProperty<String>(x.getValue().getTelefono().orElse(null)));
         mail_column.setCellValueFactory(new PropertyValueFactory<Client, String>("mail"));
 

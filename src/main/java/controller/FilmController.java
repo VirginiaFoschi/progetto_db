@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -36,10 +35,10 @@ public class FilmController implements Initializable {
     private TableColumn<FilmExtension, Integer> anno;
 
     @FXML
-    private TableColumn<FilmExtension, Date> dataFine;
+    private TableColumn<FilmExtension, String> dataFine;
 
     @FXML
-    private TableColumn<FilmExtension, Date> dataInizio;
+    private TableColumn<FilmExtension, String> dataInizio;
 
     @FXML
     private DatePicker date;
@@ -174,8 +173,8 @@ public class FilmController implements Initializable {
         durata.setCellValueFactory(new PropertyValueFactory<FilmExtension,Integer>("duration"));
         anno.setCellValueFactory(new PropertyValueFactory<FilmExtension,Integer>("year"));
         trama.setCellValueFactory(x->new SimpleObjectProperty<String>(x.getValue().getPlot().orElse(null)));
-        dataInizio.setCellValueFactory(x->new SimpleObjectProperty<Date>(x.getValue().getPeriod().getStartDate()));
-        dataFine.setCellValueFactory(x->new SimpleObjectProperty<Date>(x.getValue().getPeriod().getEndDate()));
+        dataInizio.setCellValueFactory(x->new SimpleObjectProperty<String>(utils.Utils.printDate(x.getValue().getPeriod().getStartDate())));
+        dataFine.setCellValueFactory(x->new SimpleObjectProperty<String>(utils.Utils.printDate(x.getValue().getPeriod().getEndDate())));
         genere.setCellValueFactory(new PropertyValueFactory<FilmExtension,String>("genres"));
 
         updateTable(Controller.getFilmsTable().findAll());

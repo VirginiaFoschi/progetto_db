@@ -81,7 +81,7 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
                 final String cf = resultSet.getString("CF");
-                final Date dataAcquisto = Utils.dateToSqlDate(resultSet.getDate("dataAcquisto"));
+                final Date dataAcquisto = Utils.sqlDateToDateWithTime(resultSet.getTimestamp("dataAcquisto"));
                 final int ingressiDisponibili = resultSet.getInt("numeroIngressiDisponibili");
                 final int numeroIngressi = resultSet.getInt("numeroIngressiTotali");
                 // After retrieving all the data we create a film object
@@ -104,12 +104,11 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
 
     @Override
     public boolean save(final CineCard cineCard) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(CF,dataAcquisto,numeroIngressiDisponibili,numeroIngressiTotali) VALUES (?,?,?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(CF,dataAcquisto,numeroIngressiDisponibili,numeroIngressiTotali) VALUES (?,NOW(),?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, cineCard.getClient_cf());
-            statement.setDate(2, Utils.dateToSqlDate(cineCard.getDataAcquisto()));
-            statement.setInt(3, cineCard.getIngressiDisponibili());
-            statement.setInt(4, cineCard.getIngressiTotali());
+            statement.setInt(2, cineCard.getIngressiDisponibili());
+            statement.setInt(3, cineCard.getIngressiTotali());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -152,7 +151,7 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
 
     public Optional<CineCard> getNewer(final String client) {
         // 1. Define the query with the "?" placeholder(s)
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CF = ?  ORDER BY dataAcquisto ASC LIMIT 1";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE CF = ?  ORDER BY dataAcquisto DESC LIMIT 1";
         // 2. Prepare a statement inside a try-with-resources
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             // 3. Fill in the "?" with actual data
@@ -161,7 +160,8 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
             final ResultSet resultSet = statement.executeQuery();
             // 5. Do something with the result of the query execution; 
             //    here we extract the first (and only) film from the ResultSet
-            return readCineCardsFromResultSet(resultSet).stream().findFirst();
+            List<CineCard> list = readCineCardsFromResultSet(resultSet);
+            return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
@@ -180,7 +180,7 @@ public final class CinecardsTable implements Table<CineCard, Pair<Client,Date>> 
             //    here we extract the first (and only) film from the ResultSet
             List<CineCard> all = readCineCardsFromResultSet(resultSet);
             Optional<CineCard> card = hasCinecardValid(cf);
-            return all.stream().map(x->card.isPresent() && !x.equals(card.get()) ? new CineCard(x.getClient_cf(),x.getDataAcquisto(),0,x.getIngressiTotali(),false) : x ).toList();
+            return all.stream().map(x->card.isPresent() && x.equals(card.get()) ? x : new CineCard(x.getClient_cf(),x.getDataAcquisto(),0,x.getIngressiTotali(),false)).toList();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }

@@ -191,6 +191,24 @@ public final class ShowingsTable implements Table<Showing, Triplets<Date,String,
         }
     }
 
+    public List<Date> getFilmDatesOfType (final int filmID, final String tipo) {
+        final String query = "SELECT DISTINCT data FROM " + TABLE_NAME + " WHERE codiceFilm = ? AND tipo = ? ";
+        List<Date> dates = new ArrayList<>();
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1,filmID);
+            statement.setString(2, tipo);
+            final ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                // To get the values of the columns of the row currently pointed we use the get methods 
+                final Date data = Utils.sqlDateToDate(resultSet.getDate("data"));
+                dates.add(data);
+            }
+            return dates;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public List<Showing> getFilmShowsOnDate (final int filmID, final Date dateShow) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE codiceFilm = ? AND data = ? ";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

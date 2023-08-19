@@ -55,7 +55,7 @@ public class ShopController implements Initializable {
     private TableColumn<Ticket, Boolean> cinecard_column;
 
     @FXML
-    private TableColumn<Ticket, Date> data;
+    private TableColumn<Ticket, String> data;
 
     @FXML
     private TableColumn<Ticket,Date> dataAcquisto;
@@ -126,14 +126,6 @@ public class ShopController implements Initializable {
     @FXML
     private ComboBox<Integer> entrances;
 
-    /*private void clear() {
-        cf.clear();
-        cf2.clear();
-        cf3.clear();
-        cf4.clear();
-        filmID.clear();
-    }*/
-
     @FXML
     void buyTicket(ActionEvent event) {
         String filmid = filmID.getText();
@@ -148,7 +140,7 @@ public class ShopController implements Initializable {
             Controller.getTicketTable().save(ticket);
             table1.setItems(FXCollections.observableArrayList(Controller.getTicketTable().findAll()));
             Optional<Showing> show = Controller.getShowingTable().findByPrimaryKey(new Triplets<Date,String,FilmDetail>(dataShow, timeShow, new FilmDetail(modprog, Integer.parseInt(filmid))));
-            if(show.isPresent()) {
+            if(show.isPresent() && !Controller.getSeatTable().showFreeSeats(dataShow,timeShow,Integer.parseInt(filmid)).isEmpty()) {
                 Controller.getShowingTable().update(new Showing(dataShow, timeShow, show.get().getNumberSpectator() +1, show.get().getTheaterID(), Integer.parseInt(filmid), modprog));
             }
             if(cineCard) {
@@ -157,7 +149,6 @@ public class ShopController implements Initializable {
                     Controller.getCinecardTable().update(new CineCard(client, card.get().getDataAcquisto(), card.get().getIngressiDisponibili()-1, card.get().getIngressiTotali()));
                 }
             }
-            //clear();
         } else {
             Controller.allert();
         }
@@ -170,7 +161,7 @@ public class ShopController implements Initializable {
         if(!cF.isEmpty() && num!=null) {
             if(Controller.getClientTable().findByPrimaryKey(cF).isPresent()) {
                 if(Controller.getCinecardTable().hasCinecardValid(cF).isPresent()) {
-                    Controller.allertNotExist("Non \u00E8 possibile acquistare una nuova cineCard perchè il cliente ne possiede gi\u00E0 una valida");
+                    Controller.allertNotExist("Non \u00E8 possibile acquistare una nuova cineCard perch\u00E8 il cliente ne possiede gi\u00E0 una valida");
                 }
                 else {
                     CineCard card = new CineCard(cF, new Date(), num, num);
@@ -179,7 +170,6 @@ public class ShopController implements Initializable {
             } else {
                 Controller.allertNotExist("non esiste un cliente con quel codice fiscale");
             }
-            //clear();
         } else {
             Controller.allert();
         }
@@ -194,7 +184,6 @@ public class ShopController implements Initializable {
             } else {
                 Controller.allertNotExist("non esiste un cliente con quel codice fiscale");
             }
-            //clear();
         } else {
             Controller.allertNotExist("inserisci prima il codice fiscale del cliente");
         }
@@ -210,7 +199,6 @@ public class ShopController implements Initializable {
         String client = cf2.getText();
         if(!client.isEmpty()) {
             table1.setItems(FXCollections.observableArrayList(Controller.getTicketTable().getClientTickets(client)));
-            //clear();
         } else {
             Controller.allert();
         }
@@ -219,15 +207,16 @@ public class ShopController implements Initializable {
     @FXML
     void updateDate(MouseEvent event) {
         String film = filmID.getText();
-        if(!film.isEmpty()) {
+        String prog = modProg.getSelectionModel().getSelectedItem();
+        if(!film.isEmpty() && prog != null) {
             int id = Integer.parseInt(film);
             if(Controller.getFilmsTable().findByPrimaryKey(id).isPresent()) {
-                date.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmDates(id)));
+                date.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmDatesOfType(id,prog)));
             } else {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
         } else {
-            Controller.allertNotExist("inserisci prima il codice del film");
+            Controller.allertNotExist("inserisci prima il codice del film  ela modalità di proiezione");
         }
     }
 
@@ -266,9 +255,12 @@ public class ShopController implements Initializable {
     @FXML
     void hasCinecard(MouseEvent event) {
         String client = cf.getText();
-        if(!client.isEmpty()) {
+        String film = filmID.getText();
+        Date dataShow = date.getSelectionModel().getSelectedItem();
+        String timeShow = time.getSelectionModel().getSelectedItem();
+        if(!client.isEmpty() && !film.isEmpty() && dataShow!=null && timeShow != null) {
             if(Controller.getClientTable().findByPrimaryKey(client).isPresent()) {
-                if(Controller.getCinecardTable().hasCinecardValid(client).isPresent()) {
+                if(Controller.getCinecardTable().hasCinecardValid(client).isPresent() && !Controller.getTicketTable().hasAlreadyUsedCinecard(client,Integer.parseInt(film),dataShow,timeShow)) {
                     cinecard.setItems(FXCollections.observableArrayList(true,false));
                 } else {
                     cinecard.setItems(FXCollections.observableArrayList(false));
@@ -277,7 +269,7 @@ public class ShopController implements Initializable {
                 Controller.allertNotExist("non esiste un cliente con quel codice fiscale");
             }
         } else {
-            Controller.allertNotExist("inserisci prima il codice fiscale del cliente");
+            Controller.allertNotExist("inserisci prima il codice fiscale del cliente, il film e la data e l'ora della proiezione");
         }
     }
 
@@ -300,12 +292,12 @@ public class ShopController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         cf_column.setCellValueFactory(new PropertyValueFactory<>("clientID"));
-        data.setCellValueFactory(new PropertyValueFactory<>("dateShow"));
+        data.setCellValueFactory(x-> new SimpleObjectProperty<>(utils.Utils.printDate(x.getValue().getDateShow()))); //new PropertyValueFactory<>("dateShow"));
         ora.setCellValueFactory(new PropertyValueFactory<>("startTime"));
         sala.setCellValueFactory(new PropertyValueFactory<>("salaID"));
         fila.setCellValueFactory(new PropertyValueFactory<>("letterLine"));
         posto.setCellValueFactory(new PropertyValueFactory<>("numberSeat"));
-        dataAcquisto.setCellValueFactory((new PropertyValueFactory<>("purchaseDate")));
+        dataAcquisto.setCellValueFactory(new PropertyValueFactory<>("purchaseDate"));
         cinecard_column.setCellValueFactory(new PropertyValueFactory<>("cineCard"));
         prezzo.setCellValueFactory(x->new SimpleObjectProperty<String>(!x.getValue().isCineCard() ? String.valueOf(Controller.getAgeRangeTable().getPriceFromEta(x.getValue().getClientID(),x.getValue().getTypeFilm(), x.getValue().getPurchaseDate())).concat("0 \u20AC") : ""));
 

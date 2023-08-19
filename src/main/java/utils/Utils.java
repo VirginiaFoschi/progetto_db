@@ -1,6 +1,7 @@
 package utils;
 
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -17,6 +18,10 @@ public final class Utils {
     public static java.sql.Date dateToSqlDate(final java.util.Date date) {
         return date == null ? null : new java.sql.Date(date.getTime());
     }
+
+    public static java.util.Date sqlDateToDateWithTime(final java.sql.Timestamp sqlDate) {
+        return sqlDate == null ? null : new java.util.Date(sqlDate.getTime());
+    }
     
     public static Optional<java.util.Date> buildDate(final int day, final int month, final int year) {
         try {
@@ -27,6 +32,12 @@ public final class Utils {
         } catch (final ParseException e) {
             return Optional.empty();
         }
+    }
+
+    public static String printDate(final java.util.Date date) {
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String dateFormatString = formatter.format(date);
+        return dateFormatString;
     }
 
     public static java.util.Date localDateToDate(LocalDate date){
