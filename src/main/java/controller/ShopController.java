@@ -216,7 +216,7 @@ public class ShopController implements Initializable {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
         } else {
-            Controller.allertNotExist("inserisci prima il codice del film  ela modalità di proiezione");
+            Controller.allertNotExist("inserisci prima il codice del film e la modalit\u00E0 di proiezione");
         }
     }
 
@@ -277,15 +277,16 @@ public class ShopController implements Initializable {
     void updateTime(MouseEvent event) {
         String film = filmID.getText();
         Date dataShow = date.getSelectionModel().getSelectedItem();
+        String prog = modProg.getSelectionModel().getSelectedItem();
         if(!film.isEmpty() && dataShow != null) {
             int id = Integer.parseInt(film);
             if(Controller.getFilmsTable().findByPrimaryKey(id).isPresent()) {
-                time.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmShowsOnDate(id,dataShow).stream().map(x->x.getStartTime()).collect(Collectors.toList())));
+                time.setItems(FXCollections.observableArrayList(Controller.getShowingTable().getFilmShowsOnDate(id,dataShow).stream().filter(x->x.getProgrammingMode().equals(prog)).map(x->x.getStartTime()).collect(Collectors.toList())));
             } else {
                 Controller.allertNotExist("non esiste un film con quel codice");
             }
         } else {
-            Controller.allertNotExist("inserisci prima il codice del film e la data");
+            Controller.allertNotExist("inserisci prima il codice del film, la modalit\u00E0 di proiezione e la data");
         }
     }
 
