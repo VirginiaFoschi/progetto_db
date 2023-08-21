@@ -60,6 +60,4 @@ public class Pair<X,Y> {
 		return "Pair [x=" + x + ", y=" + y + "]";
 	}
 	
-	
-
 }

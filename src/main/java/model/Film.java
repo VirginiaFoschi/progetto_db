@@ -2,17 +2,6 @@ package model;
 
 import java.util.Optional;
 
-/***
- * Class representing a Film with simple fields: id, title, director, DurationgetDuration.
- * The corresponding database table is:
- *    CREATE TABLE Films (
- *       id INT NOT NULL PRIMARY KEY,
- *       title CHAR(40) NOT NULL,
- *       director CHAR (40) NOT NULL,
- *       DurationgetDuration DATE
- *    )
- */
-
 // The Film class could be defined in a way more concise way with the use of a record class.
 // It is a fairly new and very useful new Java feature:
 // https://docs.oracle.com/en/java/javase/17/language/records.html

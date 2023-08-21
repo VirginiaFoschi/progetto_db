@@ -16,12 +16,6 @@ public interface Table<V,K> {
     String getTableName();
     
     /**
-     * Creates the database table
-     * @return false if the table could not be created
-     */
-    //boolean createTable();
-    
-    /**
      * Drops the database table
      * @return false if the table could not be dropped
      */
